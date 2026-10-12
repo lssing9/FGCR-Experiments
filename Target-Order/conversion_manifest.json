@@ -1,0 +1,22 @@
+{
+  "source_archive": "reproducibility_round2.zip",
+  "source_python_files": {
+    "bn_core.py": "35d17442e628987351111cc79a328375035a0f68bd1556c9d1a924b00c683794",
+    "test_core.py": "176c896c045a2ed384867d2a5c56f80920f6e891eb4f27af132ce71e34125377",
+    "run_experiments.py": "b97fa93494def4e4645b6a85a7780873e8be94e44dc68d382565d7a3c266cf36",
+    "make_outputs.py": "69af9c0ecdc5217268756fb45d858d471a9b56eee170385c46dc840e11b0480f",
+    "verify_saved.py": "be67a31ce58363f4ccc43d0b37589f2b20b1ab6a68f4f3030a0a7f3a8c61e46e"
+  },
+  "converted_notebooks": [
+    "00_bn_core.ipynb",
+    "01_test_core.ipynb",
+    "02_run_experiments.ipynb",
+    "03_make_outputs_png.ipynb",
+    "04_verify_saved.ipynb"
+  ],
+  "figures": [
+    "bounds.png",
+    "order_sensitivity.png",
+    "selection.png"
+  ]
+}

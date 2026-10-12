@@ -1,0 +1,318 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.4) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(jmlr_revised_round2.tex
+LaTeX2e <2023-06-01> patch level 1
+L3 programming layer <2023-08-29>
+(D:\MikTex\tex/latex/base\article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(D:\MikTex\tex/latex/base\size11.clo)) (D:\MikTex\tex/latex/base\fontenc.sty)
+(D:\MikTex\tex/latex/lm\lmodern.sty)
+(D:\MikTex\tex/generic/pdftex\glyphtounicode.tex)
+(D:\MikTex\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(D:\MikTex\tex/latex/amsmath\amstext.sty
+(D:\MikTex\tex/latex/amsmath\amsgen.sty))
+(D:\MikTex\tex/latex/amsmath\amsbsy.sty)
+(D:\MikTex\tex/latex/amsmath\amsopn.sty)) (jmlr2e.sty
+Document Style `jmlr' -- January 2016.
+(D:\MikTex\tex/latex/graphics\epsfig.sty
+(D:\MikTex\tex/latex/graphics\graphicx.sty
+(D:\MikTex\tex/latex/graphics\keyval.sty)
+(D:\MikTex\tex/latex/graphics\graphics.sty
+(D:\MikTex\tex/latex/graphics\trig.sty)
+(D:\MikTex\tex/latex/graphics-cfg\graphics.cfg)
+(D:\MikTex\tex/latex/graphics-def\pdftex.def))))
+(D:\MikTex\tex/latex/amsfonts\amssymb.sty
+(D:\MikTex\tex/latex/amsfonts\amsfonts.sty))
+(C:\CTEX\MiKTeX\tex/latex/natbib\natbib.sty)
+(D:\MikTex\tex/latex/hyperref\hyperref.sty
+(C:\CTEX\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(D:\MikTex\tex/generic/iftex\iftex.sty)
+(D:\MikTex\tex/generic/pdftexcmds\pdftexcmds.sty
+(C:\CTEX\MiKTeX\tex/generic/infwarerr\infwarerr.sty))
+(C:\CTEX\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty)
+(C:\CTEX\MiKTeX\tex/generic/kvdefinekeys\kvdefinekeys.sty)
+(C:\CTEX\MiKTeX\tex/generic/pdfescape\pdfescape.sty)
+(C:\CTEX\MiKTeX\tex/latex/hycolor\hycolor.sty)
+(C:\CTEX\MiKTeX\tex/latex/letltxmacro\letltxmacro.sty)
+(C:\CTEX\MiKTeX\tex/latex/auxhook\auxhook.sty)
+(D:\MikTex\tex/latex/hyperref\nameref.sty
+(C:\CTEX\MiKTeX\tex/latex/refcount\refcount.sty)
+(C:\CTEX\MiKTeX\tex/generic/gettitlestring\gettitlestring.sty
+(C:\CTEX\MiKTeX\tex/latex/kvoptions\kvoptions.sty)))
+(D:\MikTex\tex/latex/etoolbox\etoolbox.sty)
+(D:\MikTex\tex/latex/hyperref\pd1enc.def)
+(C:\CTEX\MiKTeX\tex/generic/intcalc\intcalc.sty)
+(D:\MikTex\tex/latex/hyperref\puenc.def) (D:\MikTex\tex/latex/url\url.sty)
+(C:\CTEX\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\CTEX\MiKTeX\tex/generic/bigintcalc\bigintcalc.sty))
+(D:\MikTex\tex/latex/base\atbegshi-ltx.sty))
+(D:\MikTex\tex/latex/hyperref\hpdftex.def
+(D:\MikTex\tex/latex/base\atveryend-ltx.sty)
+(C:\CTEX\MiKTeX\tex/latex/rerunfilecheck\rerunfilecheck.sty
+(C:\CTEX\MiKTeX\tex/generic/uniquecounter\uniquecounter.sty))))
+(C:\CTEX\MiKTeX\tex/latex/algorithm2e\algorithm2e.sty
+(D:\MikTex\tex/latex/base\ifthen.sty)
+(C:\CTEX\MiKTeX\tex/latex/ifoddpage\ifoddpage.sty)
+(D:\MikTex\tex/latex/tools\xspace.sty)
+(C:\CTEX\MiKTeX\tex/latex/relsize\relsize.sty))
+(C:\CTEX\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\CTEX\MiKTeX\tex/latex/multirow\multirow.sty)
+(D:\MikTex\tex/latex/tools\longtable.sty) (D:\MikTex\tex/latex/tools\array.sty)
+ (C:\CTEX\MiKTeX\tex/latex/enumitem\enumitem.sty)
+(D:\MikTex\tex/latex/listings\listings.sty
+(D:\MikTex\tex/latex/listings\lstmisc.sty)
+(D:\MikTex\tex/latex/listings\listings.cfg))
+(D:\MikTex\tex/latex/xcolor\xcolor.sty
+(D:\MikTex\tex/latex/graphics-cfg\color.cfg)
+(D:\MikTex\tex/latex/graphics\mathcolor.ltx))
+(C:\CTEX\MiKTeX\tex/latex/float\float.sty)
+(C:\CTEX\MiKTeX\tex/latex/microtype\microtype.sty
+(C:\CTEX\MiKTeX\tex/latex/microtype\microtype-pdftex.def)
+(C:\CTEX\MiKTeX\tex/latex/microtype\microtype.cfg))
+(D:\MikTex\tex/latex/pgf/frontendlayer\tikz.sty
+(D:\MikTex\tex/latex/pgf/basiclayer\pgf.sty
+(D:\MikTex\tex/latex/pgf/utilities\pgfrcs.sty
+(D:\MikTex\tex/generic/pgf/utilities\pgfutil-common.tex)
+(D:\MikTex\tex/generic/pgf/utilities\pgfutil-latex.def)
+(D:\MikTex\tex/generic/pgf/utilities\pgfrcs.code.tex
+(D:\MikTex\tex/generic/pgf\pgf.revision.tex)))
+(D:\MikTex\tex/latex/pgf/basiclayer\pgfcore.sty
+(D:\MikTex\tex/latex/pgf/systemlayer\pgfsys.sty
+(D:\MikTex\tex/generic/pgf/systemlayer\pgfsys.code.tex
+(D:\MikTex\tex/generic/pgf/utilities\pgfkeys.code.tex
+(D:\MikTex\tex/generic/pgf/utilities\pgfkeyslibraryfiltered.code.tex))
+(D:\MikTex\tex/generic/pgf/systemlayer\pgf.cfg)
+(D:\MikTex\tex/generic/pgf/systemlayer\pgfsys-pdftex.def
+(D:\MikTex\tex/generic/pgf/systemlayer\pgfsys-common-pdf.def)))
+(D:\MikTex\tex/generic/pgf/systemlayer\pgfsyssoftpath.code.tex)
+(D:\MikTex\tex/generic/pgf/systemlayer\pgfsysprotocol.code.tex))
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcore.code.tex
+(D:\MikTex\tex/generic/pgf/math\pgfmath.code.tex
+(D:\MikTex\tex/generic/pgf/math\pgfmathutil.code.tex)
+(D:\MikTex\tex/generic/pgf/math\pgfmathparser.code.tex)
+(D:\MikTex\tex/generic/pgf/math\pgfmathfunctions.code.tex)
+(D:\MikTex\tex/generic/pgf/math\pgfmathfunctions.basic.code.tex)
+(D:\MikTex\tex/generic/pgf/math\pgfmathfunctions.trigonometric.code.tex)
+(D:\MikTex\tex/generic/pgf/math\pgfmathfunctions.random.code.tex)
+(D:\MikTex\tex/generic/pgf/math\pgfmathfunctions.comparison.code.tex)
+(D:\MikTex\tex/generic/pgf/math\pgfmathfunctions.base.code.tex)
+(D:\MikTex\tex/generic/pgf/math\pgfmathfunctions.round.code.tex)
+(D:\MikTex\tex/generic/pgf/math\pgfmathfunctions.misc.code.tex)
+(D:\MikTex\tex/generic/pgf/math\pgfmathfunctions.integerarithmetics.code.tex)
+(D:\MikTex\tex/generic/pgf/math\pgfmathcalc.code.tex)
+(D:\MikTex\tex/generic/pgf/math\pgfmathfloat.code.tex))
+(D:\MikTex\tex/generic/pgf/math\pgfint.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcorepoints.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcorepathconstruct.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcorepathusage.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcorescopes.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcoregraphicstate.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcoretransformations.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcorequick.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcoreobjects.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcorepathprocessing.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcorearrows.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcoreshade.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcoreimage.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcoreexternal.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcorelayers.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcoretransparency.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcorepatterns.code.tex)
+(D:\MikTex\tex/generic/pgf/basiclayer\pgfcorerdf.code.tex)))
+(D:\MikTex\tex/generic/pgf/modules\pgfmoduleshapes.code.tex)
+(D:\MikTex\tex/generic/pgf/modules\pgfmoduleplot.code.tex)
+(D:\MikTex\tex/latex/pgf/compatibility\pgfcomp-version-0-65.sty)
+(D:\MikTex\tex/latex/pgf/compatibility\pgfcomp-version-1-18.sty))
+(D:\MikTex\tex/latex/pgf/utilities\pgffor.sty
+(D:\MikTex\tex/latex/pgf/utilities\pgfkeys.sty
+(D:\MikTex\tex/generic/pgf/utilities\pgfkeys.code.tex))
+(D:\MikTex\tex/latex/pgf/math\pgfmath.sty
+(D:\MikTex\tex/generic/pgf/math\pgfmath.code.tex))
+(D:\MikTex\tex/generic/pgf/utilities\pgffor.code.tex))
+(D:\MikTex\tex/generic/pgf/frontendlayer/tikz\tikz.code.tex
+(D:\MikTex\tex/generic/pgf/libraries\pgflibraryplothandlers.code.tex)
+(D:\MikTex\tex/generic/pgf/modules\pgfmodulematrix.code.tex)
+(D:\MikTex\tex/generic/pgf/frontendlayer/tikz/libraries\tikzlibrarytopaths.code
+.tex))) (C:\CTEX\MiKTeX\tex/latex/tikz-cd\tikz-cd.sty
+(C:\CTEX\MiKTeX\tex/latex/tikz-cd\tikzlibrarycd.code.tex
+(D:\MikTex\tex/generic/pgf/frontendlayer/tikz/libraries\tikzlibrarymatrix.code.
+tex)
+(D:\MikTex\tex/generic/pgf/frontendlayer/tikz/libraries\tikzlibraryquotes.code.
+tex) (D:\MikTex\tex/generic/pgf/libraries\pgflibraryarrows.meta.code.tex)))
+(D:\MikTex\tex/generic/pgf/frontendlayer/tikz/libraries\tikzlibrarypositioning.
+code.tex) (C:\CTEX\MiKTeX\tex/latex/lastpage\lastpage.sty
+(C:\CTEX\MiKTeX\tex/latex/lastpage\lastpage2e.sty
+(C:\CTEX\MiKTeX\tex/latex/lastpage\lastpageclassic.sty) 
+)) (D:\MikTex\tex/latex/listings\lstlang1.sty) (D:\MikTex\tex/latex/lm\t1lmr.fd
+) (D:\MikTex\tex/latex/l3backend\l3backend-pdftex.def) (jmlr_revised_round2.aux
+) (D:\MikTex\tex/context/base/mkii\supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (D:\MikTex\tex/latex/epstopdf-pkg\epstopdf-base.sty
+(D:\MikTex\tex/latex/00miktex\epstopdf-sys.cfg)) (jmlr_revised_round2.out)
+(jmlr_revised_round2.out) (C:\CTEX\MiKTeX\tex/latex/microtype\mt-cmr.cfg)
+(D:\MikTex\tex/latex/lm\ot1lmr.fd) (D:\MikTex\tex/latex/lm\omllmm.fd)
+(D:\MikTex\tex/latex/lm\omslmsy.fd) (D:\MikTex\tex/latex/lm\omxlmex.fd)
+(D:\MikTex\tex/latex/amsfonts\umsa.fd)
+(C:\CTEX\MiKTeX\tex/latex/microtype\mt-msa.cfg)
+(D:\MikTex\tex/latex/amsfonts\umsb.fd)
+(C:\CTEX\MiKTeX\tex/latex/microtype\mt-msb.cfg)
+(D:\MikTex\tex/latex/lm\ts1lmr.fd) [1{C:/CTEX/UserData/fonts/map/pdftex/pdftex.
+map{Unicode.sfd}{UGBK.sfd}}{D:/MikTex/fonts/enc/dvips/lm/lm-ec.enc}{D:/MikTex/f
+onts/enc/dvips/lm/lm-mathsy.enc}{D:/MikTex/fonts/enc/dvips/lm/lm-ts1.enc}]
+[2{D:/MikTex/fonts/enc/dvips/lm/lm-mathit.enc}{D:/MikTex/fonts/enc/dvips/lm/lm-
+rm.enc}] [3] [4] [5{D:/MikTex/fonts/enc/dvips/lm/lm-mathex.enc}] [6] [7]
+[8] [9] [10]
+Underfull \hbox (badness 10000) in paragraph at lines 522--529
+[][]
+
+Underfull \hbox (badness 10000) in paragraph at lines 530--540
+
+[11] [12] [13] [14] [15]
+Underfull \hbox (badness 10000) in paragraph at lines 720--723
+
+[16]
+Underfull \hbox (badness 3503) in paragraph at lines 775--779
+[]\T1/lmr/m/n/10.95 (+20) Therefore, the to-tal time com-plex-ity of the com-pl
+ete FGCR pro-ce-dure is
+
+Underfull \hbox (badness 10000) in paragraph at lines 775--779
+
+[17] [18] [19]
+Underfull \hbox (badness 10000) in paragraph at lines 1098--1113
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1130--1151
+
+[20]
+Underfull \hbox (badness 10000) in paragraph at lines 1205--1211
+
+[21]
+Underfull \hbox (badness 10000) in paragraph at lines 1285--1293
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1324--1339
+[][]
+[22]
+Underfull \hbox (badness 10000) in paragraph at lines 1405--1411
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1543--1560
+
+[23]
+Underfull \hbox (badness 10000) in paragraph at lines 1634--1662
+
+[24] [25] [26] [27]
+Underfull \hbox (badness 10000) in paragraph at lines 1799--1801
+[][]
+
+Underfull \hbox (badness 2556) in paragraph at lines 1803--1807
+[]\T1/lmr/m/n/10.95 (+20) By Pinsker's in-equal-ity, $\OML/lmm/m/it/10.95 d[]\O
+T1/lmr/m/n/10.95 (+20) (\OML/lmm/m/it/10.95 P[]; []\OT1/lmr/m/n/10.95 (+20) ) \
+OMS/lmsy/m/n/10.95 ^^T []$\T1/lmr/m/n/10.95 (+20) . There-fore,
+[28] [29]
+Underfull \hbox (badness 10000) in paragraph at lines 1928--1933
+[][]\T1/lmr/m/it/10.95 (+20) Suppose
+
+Underfull \hbox (badness 2245) in paragraph at lines 1961--1962
+[][]\T1/lmr/m/it/10.95 (+20) Under the
+[30]
+Underfull \hbox (badness 10000) in paragraph at lines 2028--2046
+
+[31]
+Underfull \hbox (badness 10000) in paragraph at lines 2100--2111
+
+[32]
+Underfull \hbox (badness 3579) in paragraph at lines 2112--2122
+[]\T1/lmr/m/n/10.95 (+20) The max-i-miza-tion is a sim-ple bounded-simplex lin-
+ear pro-gram. Ini-tial-ize
+[33] [34]
+Underfull \hbox (badness 10000) in paragraph at lines 2237--2242
+[][]\T1/lmr/m/it/10.95 (+20) Let
+[35] (D:\MikTex\tex/latex/lm\ot1lmss.fd) [36]
+Underfull \hbox (badness 10000) in paragraph at lines 2360--2370
+
+(D:\MikTex\tex/latex/lm\t1lmtt.fd) [37] [38]
+(reproducibility_round2/results/table_new-structure.tex)
+(reproducibility_round2/results/table_new-time.tex) [39]
+(reproducibility_round2/results/table_new-selection.tex) [40 <./reproducibility
+_round2/figures/order_sensitivity.pdf>]
+(reproducibility_round2/results/table_new-bounds.tex)
+Underfull \hbox (badness 1571) in paragraph at lines 2583--2596
+[]\T1/lmr/m/n/10.95 (+20) Across all sizes, the study con-tains 300 CHILD and 3
+000 ALARM distinct-
+[41 <./reproducibility_round2/figures/selection.pdf>] [42 <./reproducibility_ro
+und2/figures/bounds.pdf>] [43] [44]
+Underfull \hbox (badness 10000) in paragraph at lines 2725--2729
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2735--2739
+
+[45]
+Underfull \hbox (badness 10000) in paragraph at lines 2770--2773
+
+[46]
+Underfull \hbox (badness 10000) in paragraph at lines 2779--2786
+
+
+Underfull \hbox (badness 2961) in paragraph at lines 2790--2795
+[][]\T1/lmr/m/it/10.95 (+20) Let $\OML/lmm/m/it/10.95 F; J$ \T1/lmr/m/it/10.95 
+(+20) be DAGs with
+
+Underfull \hbox (badness 10000) in paragraph at lines 2796--2815
+
+[47] [48] [49] [50]
+Underfull \hbox (badness 10000) in paragraph at lines 2954--2961
+
+[51] [52]
+Underfull \hbox (badness 1024) in paragraph at lines 3047--3052
+\T1/lmr/m/n/10.95 (+20) By the def-i-ni-tions of $\OML/lmm/m/it/10.95 "[]\OT1/l
+mr/m/n/10.95 (+20) (\OML/lmm/m/it/10.95 D\OT1/lmr/m/n/10.95 (+20) )$ \T1/lmr/m/
+n/10.95 (+20) and $\OML/lmm/m/it/10.95 "[]\OT1/lmr/m/n/10.95 (+20) (\OML/lmm/m/
+it/10.95 D\OT1/lmr/m/n/10.95 (+20) )$\T1/lmr/m/n/10.95 (+20) , we there-fore ha
+ve $\OML/lmm/m/it/10.95 D[]\OT1/lmr/m/n/10.95 (+20) (\OML/lmm/m/it/10.95 P[]\OM
+S/lmsy/m/n/10.95 k[]\OT1/lmr/m/n/10.95 (+20) ) =
+
+Underfull \hbox (badness 10000) in paragraph at lines 3047--3052
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 3070--3075
+
+
+Underfull \hbox (badness 1635) in paragraph at lines 3095--3102
+\U/msb/m/n/10.95 E[] []$\T1/lmr/m/n/10.95 (+20) . There-fore, $\OML/lmm/m/it/10
+.95 D[]\OT1/lmr/m/n/10.95 (+20) (\OML/lmm/m/it/10.95 P[]\OMS/lmsy/m/n/10.95 k\O
+ML/lmm/m/it/10.95 Q[]\OT1/lmr/m/n/10.95 (+20) ) = [][] \OML/lmm/m/it/10.95 I[]\
+OT1/lmr/m/n/10.95 (+20) (\OML/lmm/m/it/10.95 X[]\OT1/lmr/m/n/10.95 (+20) ; \OML
+/lmm/m/it/10.95 X[] \OMS/lmsy/m/n/10.95 j
+
+Underfull \hbox (badness 10000) in paragraph at lines 3095--3102
+
+[53]
+Underfull \hbox (badness 10000) in paragraph at lines 3128--3133
+
+[54]
+Underfull \hbox (badness 10000) in paragraph at lines 3207--3210
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 3220--3226
+
+[55] [56] (jmlr_revised_round2.bbl [57]) 
+AED: lastpage setting LastPage
+[58] (jmlr_revised_round2.aux) )
+(see the transcript file for additional information)<D:/MikTex/fonts/type1/publ
+ic/lm/lmbx10.pfb><D:/MikTex/fonts/type1/public/lm/lmbx12.pfb><D:/MikTex/fonts/t
+ype1/public/lm/lmbx8.pfb><D:/MikTex/fonts/type1/public/lm/lmbxi10.pfb><D:/MikTe
+x/fonts/type1/public/lm/lmcsc10.pfb><D:/MikTex/fonts/type1/public/lm/lmex10.pfb
+><D:/MikTex/fonts/type1/public/lm/lmmi10.pfb><D:/MikTex/fonts/type1/public/lm/l
+mmi12.pfb><D:/MikTex/fonts/type1/public/lm/lmmi6.pfb><D:/MikTex/fonts/type1/pub
+lic/lm/lmmi8.pfb><D:/MikTex/fonts/type1/public/lm/lmr10.pfb><D:/MikTex/fonts/ty
+pe1/public/lm/lmr6.pfb><D:/MikTex/fonts/type1/public/lm/lmr8.pfb><D:/MikTex/fon
+ts/type1/public/lm/lmr9.pfb><D:/MikTex/fonts/type1/public/lm/lmri10.pfb><D:/Mik
+Tex/fonts/type1/public/lm/lmss10.pfb><D:/MikTex/fonts/type1/public/lm/lmsy10.pf
+b><D:/MikTex/fonts/type1/public/lm/lmsy6.pfb><D:/MikTex/fonts/type1/public/lm/l
+msy8.pfb><D:/MikTex/fonts/type1/public/lm/lmtt10.pfb><D:/MikTex/fonts/type1/pub
+lic/amsfonts/symbols/msbm10.pfb>
+Output written on jmlr_revised_round2.pdf (58 pages, 930535 bytes).
+Transcript written on jmlr_revised_round2.log.

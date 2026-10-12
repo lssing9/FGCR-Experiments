@@ -1,0 +1,56 @@
+{
+  "pages": 59,
+  "duplicate_labels": [],
+  "unresolved_refs": [],
+  "manual_number_tags": [],
+  "duplicate_literal_headings": [],
+  "pypdf_repeated_digit_run": false,
+  "poppler_repeated_digit_run": false,
+  "pypdf_replacement_characters": 0,
+  "poppler_replacement_characters": 0,
+  "overfull_warnings": [],
+  "undefined_references": false,
+  "key_numbering": {
+    "thm:transformation-correctness": {
+      "number": "11",
+      "page": "18"
+    },
+    "lem:root-conditioning": {
+      "number": "12",
+      "page": "20"
+    },
+    "thm:HR-minimality": {
+      "number": "14",
+      "page": "21"
+    },
+    "thm:FGCR-ros-consistency": {
+      "number": "19",
+      "page": "25"
+    },
+    "thm:HR-exact-factorization": {
+      "number": "20",
+      "page": "26"
+    },
+    "lem:descendant-maximum": {
+      "number": "38",
+      "page": "48"
+    },
+    "thm:empirical-certificate": {
+      "number": "29",
+      "page": "31"
+    },
+    "thm:validation-selection": {
+      "number": "33",
+      "page": "37"
+    },
+    "tab:new-structure": {
+      "number": "3",
+      "page": "39"
+    },
+    "tab:new-time": {
+      "number": "4",
+      "page": "39"
+    }
+  },
+  "note": "Visual review is separate. Repeated math symbols or referenced theorem titles alone are not proof of duplicate prose."
+}

@@ -1,0 +1,2529 @@
+{
+  "protocol_status": "frozen_after_pilot",
+  "base_seed": 65432,
+  "rng": "numpy.random.Generator(PCG64(SeedSequence([65432, parameter_id])))",
+"parameter_bank": {
+  "relative_path": "data/alarm_parameter_sets.xlsx",
+  "schema_version": 2,
+  "n_parameter_sets": 100,
+  "content_sha256": "43852b784b220d8f9c9e369e027e87d5bf023cb85f1c137ec28e291887c1ed23",
+  "generation_environment": {
+    "python": "3.11.15",
+    "numpy": "2.4.6"
+  },
+  "regeneration_policy": "forbidden_after_freeze"
+},
+  "iss": 10.0,
+  "network": {
+    "name": "ALARM",
+    "nodes": 37,
+    "arcs": 46,
+    "original_parameter_dimension": 509,
+    "canonical_structure_state_sha256": "8f9ce11dafcca596c568be9a780b0325d9db4c4f9d394dcf3dc90c61cbf2ae91",
+    "node_order": [
+      "CVP",
+      "PCWP",
+      "HIST",
+      "TPR",
+      "BP",
+      "CO",
+      "HRBP",
+      "HREK",
+      "HRSA",
+      "PAP",
+      "SAO2",
+      "FIO2",
+      "PRSS",
+      "ECO2",
+      "MINV",
+      "MVS",
+      "HYP",
+      "LVF",
+      "APL",
+      "ANES",
+      "PMB",
+      "INT",
+      "KINK",
+      "DISC",
+      "LVV",
+      "STKV",
+      "CCHL",
+      "ERLO",
+      "HR",
+      "ERCA",
+      "SHNT",
+      "PVS",
+      "ACO2",
+      "VALV",
+      "VLNG",
+      "VTUB",
+      "VMCH"
+    ],
+    "states": {
+      "CVP": [
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "PCWP": [
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "HIST": [
+        "TRUE",
+        "FALSE"
+      ],
+      "TPR": [
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "BP": [
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "CO": [
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "HRBP": [
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "HREK": [
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "HRSA": [
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "PAP": [
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "SAO2": [
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "FIO2": [
+        "LOW",
+        "NORMAL"
+      ],
+      "PRSS": [
+        "ZERO",
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "ECO2": [
+        "ZERO",
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "MINV": [
+        "ZERO",
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "MVS": [
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "HYP": [
+        "TRUE",
+        "FALSE"
+      ],
+      "LVF": [
+        "TRUE",
+        "FALSE"
+      ],
+      "APL": [
+        "TRUE",
+        "FALSE"
+      ],
+      "ANES": [
+        "TRUE",
+        "FALSE"
+      ],
+      "PMB": [
+        "TRUE",
+        "FALSE"
+      ],
+      "INT": [
+        "NORMAL",
+        "ESOPHAGEAL",
+        "ONESIDED"
+      ],
+      "KINK": [
+        "TRUE",
+        "FALSE"
+      ],
+      "DISC": [
+        "TRUE",
+        "FALSE"
+      ],
+      "LVV": [
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "STKV": [
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "CCHL": [
+        "NORMAL",
+        "HIGH"
+      ],
+      "ERLO": [
+        "TRUE",
+        "FALSE"
+      ],
+      "HR": [
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "ERCA": [
+        "TRUE",
+        "FALSE"
+      ],
+      "SHNT": [
+        "NORMAL",
+        "HIGH"
+      ],
+      "PVS": [
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "ACO2": [
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "VALV": [
+        "ZERO",
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "VLNG": [
+        "ZERO",
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "VTUB": [
+        "ZERO",
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ],
+      "VMCH": [
+        "ZERO",
+        "LOW",
+        "NORMAL",
+        "HIGH"
+      ]
+    },
+    "parents": {
+      "CVP": [
+        "LVV"
+      ],
+      "PCWP": [
+        "LVV"
+      ],
+      "HIST": [
+        "LVF"
+      ],
+      "TPR": [
+        "APL"
+      ],
+      "BP": [
+        "CO",
+        "TPR"
+      ],
+      "CO": [
+        "HR",
+        "STKV"
+      ],
+      "HRBP": [
+        "ERLO",
+        "HR"
+      ],
+      "HREK": [
+        "ERCA",
+        "HR"
+      ],
+      "HRSA": [
+        "ERCA",
+        "HR"
+      ],
+      "PAP": [
+        "PMB"
+      ],
+      "SAO2": [
+        "PVS",
+        "SHNT"
+      ],
+      "FIO2": [],
+      "PRSS": [
+        "INT",
+        "KINK",
+        "VTUB"
+      ],
+      "ECO2": [
+        "ACO2",
+        "VLNG"
+      ],
+      "MINV": [
+        "INT",
+        "VLNG"
+      ],
+      "MVS": [],
+      "HYP": [],
+      "LVF": [],
+      "APL": [],
+      "ANES": [],
+      "PMB": [],
+      "INT": [],
+      "KINK": [],
+      "DISC": [],
+      "LVV": [
+        "HYP",
+        "LVF"
+      ],
+      "STKV": [
+        "HYP",
+        "LVF"
+      ],
+      "CCHL": [
+        "ACO2",
+        "ANES",
+        "SAO2",
+        "TPR"
+      ],
+      "ERLO": [],
+      "HR": [
+        "CCHL"
+      ],
+      "ERCA": [],
+      "SHNT": [
+        "INT",
+        "PMB"
+      ],
+      "PVS": [
+        "FIO2",
+        "VALV"
+      ],
+      "ACO2": [
+        "VALV"
+      ],
+      "VALV": [
+        "INT",
+        "VLNG"
+      ],
+      "VLNG": [
+        "INT",
+        "KINK",
+        "VTUB"
+      ],
+      "VTUB": [
+        "DISC",
+        "VMCH"
+      ],
+      "VMCH": [
+        "MVS"
+      ]
+    }
+  },
+  "condition": {
+    "PRSS": "NORMAL",
+    "ECO2": "NORMAL"
+  },
+  "target": [
+    "INT",
+    "DISC",
+    "MVS"
+],
+"target_event": {
+    "INT": "ONESIDED",
+    "DISC": "TRUE",
+    "MVS": "NORMAL"
+},
+  "gr": {
+    "nodes": 35,
+    "edges": 41,
+    "parameter_dimension": 401,
+    "parents": {
+      "CVP": [
+        "LVV"
+      ],
+      "PCWP": [
+        "LVV"
+      ],
+      "HIST": [
+        "LVF"
+      ],
+      "TPR": [
+        "APL"
+      ],
+      "BP": [
+        "CO",
+        "TPR"
+      ],
+      "CO": [
+        "HR",
+        "STKV"
+      ],
+      "HRBP": [
+        "ERLO",
+        "HR"
+      ],
+      "HREK": [
+        "ERCA",
+        "HR"
+      ],
+      "HRSA": [
+        "ERCA",
+        "HR"
+      ],
+      "PAP": [
+        "PMB"
+      ],
+      "SAO2": [
+        "PVS",
+        "SHNT"
+      ],
+      "FIO2": [],
+      "MINV": [
+        "INT",
+        "VLNG"
+      ],
+      "MVS": [],
+      "HYP": [],
+      "LVF": [],
+      "APL": [],
+      "ANES": [],
+      "PMB": [],
+      "INT": [],
+      "KINK": [],
+      "DISC": [],
+      "LVV": [
+        "HYP",
+        "LVF"
+      ],
+      "STKV": [
+        "HYP",
+        "LVF"
+      ],
+      "CCHL": [
+        "ACO2",
+        "ANES",
+        "SAO2",
+        "TPR"
+      ],
+      "ERLO": [],
+      "HR": [
+        "CCHL"
+      ],
+      "ERCA": [],
+      "SHNT": [
+        "INT",
+        "PMB"
+      ],
+      "PVS": [
+        "FIO2",
+        "VALV"
+      ],
+      "ACO2": [
+        "VALV"
+      ],
+      "VALV": [
+        "INT",
+        "VLNG"
+      ],
+      "VLNG": [
+        "INT",
+        "KINK",
+        "VTUB"
+      ],
+      "VTUB": [
+        "DISC",
+        "VMCH"
+      ],
+      "VMCH": [
+        "MVS"
+      ]
+    }
+  },
+  "orders": [
+    {
+      "id": 1,
+      "generation_rule": "available_min_outdegree_then_name",
+      "beta": [
+        "ANES",
+        "APL",
+        "DISC",
+        "ERLO",
+        "FIO2",
+        "MVS",
+        "VMCH",
+        "ERCA",
+        "HYP",
+        "KINK",
+        "PMB",
+        "PAP",
+        "TPR",
+        "VTUB",
+        "LVF",
+        "HIST",
+        "STKV",
+        "LVV",
+        "CVP",
+        "PCWP",
+        "INT",
+        "PRSS",
+        "SHNT",
+        "VLNG",
+        "MINV",
+        "VALV",
+        "PVS",
+        "SAO2",
+        "ACO2",
+        "ECO2",
+        "CCHL",
+        "HR",
+        "HRBP",
+        "HREK",
+        "HRSA",
+        "CO",
+        "BP"
+      ],
+      "alpha_c": [
+        "PRSS",
+        "ECO2"
+      ],
+      "alpha_r": [
+        "ANES",
+        "APL",
+        "DISC",
+        "ERLO",
+        "FIO2",
+        "MVS",
+        "VMCH",
+        "ERCA",
+        "HYP",
+        "KINK",
+        "PMB",
+        "PAP",
+        "TPR",
+        "VTUB",
+        "LVF",
+        "HIST",
+        "STKV",
+        "LVV",
+        "CVP",
+        "PCWP",
+        "INT",
+        "SHNT",
+        "VLNG",
+        "MINV",
+        "VALV",
+        "PVS",
+        "SAO2",
+        "ACO2",
+        "CCHL",
+        "HR",
+        "HRBP",
+        "HREK",
+        "HRSA",
+        "CO",
+        "BP"
+      ],
+      "hr_parents": {
+        "ANES": [],
+        "APL": [],
+        "DISC": [],
+        "ERLO": [],
+        "FIO2": [],
+        "MVS": [
+          "DISC"
+        ],
+        "VMCH": [
+          "DISC",
+          "MVS"
+        ],
+        "ERCA": [],
+        "HYP": [],
+        "KINK": [
+          "DISC",
+          "VMCH"
+        ],
+        "PMB": [],
+        "PAP": [
+          "PMB"
+        ],
+        "TPR": [
+          "APL"
+        ],
+        "VTUB": [
+          "DISC",
+          "VMCH",
+          "KINK"
+        ],
+        "LVF": [],
+        "HIST": [
+          "LVF"
+        ],
+        "STKV": [
+          "HYP",
+          "LVF"
+        ],
+        "LVV": [
+          "HYP",
+          "LVF"
+        ],
+        "CVP": [
+          "LVV"
+        ],
+        "PCWP": [
+          "LVV"
+        ],
+        "INT": [
+          "KINK",
+          "VTUB"
+        ],
+        "SHNT": [
+          "PMB",
+          "INT"
+        ],
+        "VLNG": [
+          "KINK",
+          "VTUB",
+          "INT"
+        ],
+        "MINV": [
+          "INT",
+          "VLNG"
+        ],
+        "VALV": [
+          "INT",
+          "VLNG"
+        ],
+        "PVS": [
+          "FIO2",
+          "VALV"
+        ],
+        "SAO2": [
+          "SHNT",
+          "PVS"
+        ],
+        "ACO2": [
+          "VLNG",
+          "VALV"
+        ],
+        "CCHL": [
+          "ANES",
+          "TPR",
+          "SAO2",
+          "ACO2"
+        ],
+        "HR": [
+          "CCHL"
+        ],
+        "HRBP": [
+          "ERLO",
+          "HR"
+        ],
+        "HREK": [
+          "ERCA",
+          "HR"
+        ],
+        "HRSA": [
+          "ERCA",
+          "HR"
+        ],
+        "CO": [
+          "STKV",
+          "HR"
+        ],
+        "BP": [
+          "TPR",
+          "CO"
+        ]
+      },
+      "hr_edge_count": 49,
+      "fill_edge_count": 8,
+      "parameter_dimension": 481,
+      "fill_edges": [
+        "DISC->KINK",
+        "DISC->MVS",
+        "DISC->VMCH",
+        "KINK->INT",
+        "KINK->VTUB",
+        "VLNG->ACO2",
+        "VMCH->KINK",
+        "VTUB->INT"
+      ]
+    },
+    {
+      "id": 2,
+      "generation_rule": "available_reverse_lexicographic",
+      "beta": [
+        "PMB",
+        "PAP",
+        "MVS",
+        "VMCH",
+        "LVF",
+        "KINK",
+        "INT",
+        "SHNT",
+        "HYP",
+        "STKV",
+        "LVV",
+        "PCWP",
+        "HIST",
+        "FIO2",
+        "ERLO",
+        "ERCA",
+        "DISC",
+        "VTUB",
+        "VLNG",
+        "VALV",
+        "PVS",
+        "SAO2",
+        "PRSS",
+        "MINV",
+        "CVP",
+        "APL",
+        "TPR",
+        "ANES",
+        "ACO2",
+        "ECO2",
+        "CCHL",
+        "HR",
+        "HRSA",
+        "HREK",
+        "HRBP",
+        "CO",
+        "BP"
+      ],
+      "alpha_c": [
+        "PRSS",
+        "ECO2"
+      ],
+      "alpha_r": [
+        "PMB",
+        "PAP",
+        "MVS",
+        "VMCH",
+        "LVF",
+        "KINK",
+        "INT",
+        "SHNT",
+        "HYP",
+        "STKV",
+        "LVV",
+        "PCWP",
+        "HIST",
+        "FIO2",
+        "ERLO",
+        "ERCA",
+        "DISC",
+        "VTUB",
+        "VLNG",
+        "VALV",
+        "PVS",
+        "SAO2",
+        "MINV",
+        "CVP",
+        "APL",
+        "TPR",
+        "ANES",
+        "ACO2",
+        "CCHL",
+        "HR",
+        "HRSA",
+        "HREK",
+        "HRBP",
+        "CO",
+        "BP"
+      ],
+      "hr_parents": {
+        "PMB": [],
+        "PAP": [
+          "PMB"
+        ],
+        "MVS": [],
+        "VMCH": [
+          "MVS"
+        ],
+        "LVF": [],
+        "KINK": [
+          "VMCH"
+        ],
+        "INT": [
+          "VMCH",
+          "KINK"
+        ],
+        "SHNT": [
+          "PMB",
+          "INT"
+        ],
+        "HYP": [],
+        "STKV": [
+          "LVF",
+          "HYP"
+        ],
+        "LVV": [
+          "LVF",
+          "HYP"
+        ],
+        "PCWP": [
+          "LVV"
+        ],
+        "HIST": [
+          "LVF"
+        ],
+        "FIO2": [],
+        "ERLO": [],
+        "ERCA": [],
+        "DISC": [
+          "VMCH",
+          "KINK",
+          "INT"
+        ],
+        "VTUB": [
+          "VMCH",
+          "KINK",
+          "INT",
+          "DISC"
+        ],
+        "VLNG": [
+          "KINK",
+          "INT",
+          "VTUB"
+        ],
+        "VALV": [
+          "INT",
+          "VLNG"
+        ],
+        "PVS": [
+          "FIO2",
+          "VALV"
+        ],
+        "SAO2": [
+          "SHNT",
+          "PVS"
+        ],
+        "MINV": [
+          "INT",
+          "VLNG"
+        ],
+        "CVP": [
+          "LVV"
+        ],
+        "APL": [],
+        "TPR": [
+          "APL"
+        ],
+        "ANES": [],
+        "ACO2": [
+          "VLNG",
+          "VALV"
+        ],
+        "CCHL": [
+          "SAO2",
+          "TPR",
+          "ANES",
+          "ACO2"
+        ],
+        "HR": [
+          "CCHL"
+        ],
+        "HRSA": [
+          "ERCA",
+          "HR"
+        ],
+        "HREK": [
+          "ERCA",
+          "HR"
+        ],
+        "HRBP": [
+          "ERLO",
+          "HR"
+        ],
+        "CO": [
+          "STKV",
+          "HR"
+        ],
+        "BP": [
+          "TPR",
+          "CO"
+        ]
+      },
+      "hr_edge_count": 50,
+      "fill_edge_count": 9,
+      "parameter_dimension": 585,
+      "fill_edges": [
+        "INT->DISC",
+        "INT->VTUB",
+        "KINK->DISC",
+        "KINK->INT",
+        "KINK->VTUB",
+        "VLNG->ACO2",
+        "VMCH->DISC",
+        "VMCH->INT",
+        "VMCH->KINK"
+      ]
+    },
+    {
+      "id": 3,
+      "generation_rule": "available_max_outdegree_then_name",
+      "beta": [
+        "INT",
+        "LVF",
+        "PMB",
+        "KINK",
+        "HYP",
+        "LVV",
+        "ERCA",
+        "STKV",
+        "SHNT",
+        "MVS",
+        "VMCH",
+        "FIO2",
+        "ERLO",
+        "DISC",
+        "VTUB",
+        "VLNG",
+        "VALV",
+        "ACO2",
+        "PVS",
+        "SAO2",
+        "APL",
+        "TPR",
+        "ANES",
+        "CCHL",
+        "HR",
+        "CO",
+        "PRSS",
+        "PCWP",
+        "PAP",
+        "MINV",
+        "HRSA",
+        "HREK",
+        "HRBP",
+        "HIST",
+        "ECO2",
+        "CVP",
+        "BP"
+      ],
+      "alpha_c": [
+        "PRSS",
+        "ECO2"
+      ],
+      "alpha_r": [
+        "INT",
+        "LVF",
+        "PMB",
+        "KINK",
+        "HYP",
+        "LVV",
+        "ERCA",
+        "STKV",
+        "SHNT",
+        "MVS",
+        "VMCH",
+        "FIO2",
+        "ERLO",
+        "DISC",
+        "VTUB",
+        "VLNG",
+        "VALV",
+        "ACO2",
+        "PVS",
+        "SAO2",
+        "APL",
+        "TPR",
+        "ANES",
+        "CCHL",
+        "HR",
+        "CO",
+        "PCWP",
+        "PAP",
+        "MINV",
+        "HRSA",
+        "HREK",
+        "HRBP",
+        "HIST",
+        "CVP",
+        "BP"
+      ],
+      "hr_parents": {
+        "INT": [],
+        "LVF": [],
+        "PMB": [],
+        "KINK": [
+          "INT"
+        ],
+        "HYP": [],
+        "LVV": [
+          "LVF",
+          "HYP"
+        ],
+        "ERCA": [],
+        "STKV": [
+          "LVF",
+          "HYP"
+        ],
+        "SHNT": [
+          "INT",
+          "PMB"
+        ],
+        "MVS": [
+          "INT",
+          "KINK"
+        ],
+        "VMCH": [
+          "INT",
+          "KINK",
+          "MVS"
+        ],
+        "FIO2": [],
+        "ERLO": [],
+        "DISC": [
+          "INT",
+          "KINK",
+          "VMCH"
+        ],
+        "VTUB": [
+          "INT",
+          "KINK",
+          "VMCH",
+          "DISC"
+        ],
+        "VLNG": [
+          "INT",
+          "KINK",
+          "VTUB"
+        ],
+        "VALV": [
+          "INT",
+          "VLNG"
+        ],
+        "ACO2": [
+          "VLNG",
+          "VALV"
+        ],
+        "PVS": [
+          "FIO2",
+          "VALV"
+        ],
+        "SAO2": [
+          "SHNT",
+          "PVS"
+        ],
+        "APL": [],
+        "TPR": [
+          "APL"
+        ],
+        "ANES": [],
+        "CCHL": [
+          "ACO2",
+          "SAO2",
+          "TPR",
+          "ANES"
+        ],
+        "HR": [
+          "CCHL"
+        ],
+        "CO": [
+          "STKV",
+          "HR"
+        ],
+        "PCWP": [
+          "LVV"
+        ],
+        "PAP": [
+          "PMB"
+        ],
+        "MINV": [
+          "INT",
+          "VLNG"
+        ],
+        "HRSA": [
+          "ERCA",
+          "HR"
+        ],
+        "HREK": [
+          "ERCA",
+          "HR"
+        ],
+        "HRBP": [
+          "ERLO",
+          "HR"
+        ],
+        "HIST": [
+          "LVF"
+        ],
+        "CVP": [
+          "LVV"
+        ],
+        "BP": [
+          "TPR",
+          "CO"
+        ]
+      },
+      "hr_edge_count": 52,
+      "fill_edge_count": 11,
+      "parameter_dimension": 625,
+      "fill_edges": [
+        "INT->DISC",
+        "INT->KINK",
+        "INT->MVS",
+        "INT->VMCH",
+        "INT->VTUB",
+        "KINK->DISC",
+        "KINK->MVS",
+        "KINK->VMCH",
+        "KINK->VTUB",
+        "VLNG->ACO2",
+        "VMCH->DISC"
+      ]
+    },
+    {
+      "id": 4,
+      "generation_rule": "available_lexicographic",
+      "beta": [
+        "ANES",
+        "APL",
+        "DISC",
+        "ERCA",
+        "ERLO",
+        "FIO2",
+        "HYP",
+        "INT",
+        "KINK",
+        "LVF",
+        "HIST",
+        "LVV",
+        "CVP",
+        "MVS",
+        "PCWP",
+        "PMB",
+        "PAP",
+        "SHNT",
+        "STKV",
+        "TPR",
+        "VMCH",
+        "VTUB",
+        "PRSS",
+        "VLNG",
+        "MINV",
+        "VALV",
+        "ACO2",
+        "ECO2",
+        "PVS",
+        "SAO2",
+        "CCHL",
+        "HR",
+        "CO",
+        "BP",
+        "HRBP",
+        "HREK",
+        "HRSA"
+      ],
+      "alpha_c": [
+        "PRSS",
+        "ECO2"
+      ],
+      "alpha_r": [
+        "ANES",
+        "APL",
+        "DISC",
+        "ERCA",
+        "ERLO",
+        "FIO2",
+        "HYP",
+        "INT",
+        "KINK",
+        "LVF",
+        "HIST",
+        "LVV",
+        "CVP",
+        "MVS",
+        "PCWP",
+        "PMB",
+        "PAP",
+        "SHNT",
+        "STKV",
+        "TPR",
+        "VMCH",
+        "VTUB",
+        "VLNG",
+        "MINV",
+        "VALV",
+        "ACO2",
+        "PVS",
+        "SAO2",
+        "CCHL",
+        "HR",
+        "CO",
+        "BP",
+        "HRBP",
+        "HREK",
+        "HRSA"
+      ],
+      "hr_parents": {
+        "ANES": [],
+        "APL": [],
+        "DISC": [],
+        "ERCA": [],
+        "ERLO": [],
+        "FIO2": [],
+        "HYP": [],
+        "INT": [
+          "DISC"
+        ],
+        "KINK": [
+          "DISC",
+          "INT"
+        ],
+        "LVF": [],
+        "HIST": [
+          "LVF"
+        ],
+        "LVV": [
+          "HYP",
+          "LVF"
+        ],
+        "CVP": [
+          "LVV"
+        ],
+        "MVS": [
+          "DISC",
+          "INT",
+          "KINK"
+        ],
+        "PCWP": [
+          "LVV"
+        ],
+        "PMB": [],
+        "PAP": [
+          "PMB"
+        ],
+        "SHNT": [
+          "INT",
+          "PMB"
+        ],
+        "STKV": [
+          "HYP",
+          "LVF"
+        ],
+        "TPR": [
+          "APL"
+        ],
+        "VMCH": [
+          "DISC",
+          "INT",
+          "KINK",
+          "MVS"
+        ],
+        "VTUB": [
+          "DISC",
+          "INT",
+          "KINK",
+          "VMCH"
+        ],
+        "VLNG": [
+          "INT",
+          "KINK",
+          "VTUB"
+        ],
+        "MINV": [
+          "INT",
+          "VLNG"
+        ],
+        "VALV": [
+          "INT",
+          "VLNG"
+        ],
+        "ACO2": [
+          "VLNG",
+          "VALV"
+        ],
+        "PVS": [
+          "FIO2",
+          "VALV"
+        ],
+        "SAO2": [
+          "SHNT",
+          "PVS"
+        ],
+        "CCHL": [
+          "ANES",
+          "TPR",
+          "ACO2",
+          "SAO2"
+        ],
+        "HR": [
+          "CCHL"
+        ],
+        "CO": [
+          "STKV",
+          "HR"
+        ],
+        "BP": [
+          "TPR",
+          "CO"
+        ],
+        "HRBP": [
+          "ERLO",
+          "HR"
+        ],
+        "HREK": [
+          "ERCA",
+          "HR"
+        ],
+        "HRSA": [
+          "ERCA",
+          "HR"
+        ]
+      },
+      "hr_edge_count": 53,
+      "fill_edge_count": 12,
+      "parameter_dimension": 673,
+      "fill_edges": [
+        "DISC->INT",
+        "DISC->KINK",
+        "DISC->MVS",
+        "DISC->VMCH",
+        "INT->KINK",
+        "INT->MVS",
+        "INT->VMCH",
+        "INT->VTUB",
+        "KINK->MVS",
+        "KINK->VMCH",
+        "KINK->VTUB",
+        "VLNG->ACO2"
+      ]
+    }
+  ],
+  "intervention": {
+    "assignment": {
+      "VMCH": "NORMAL"
+    },
+    "transform": "generic_child_slicing_then_remove_intervention_nodes",
+    "generic_rule": "For every intervention node a and every surviving child u in ch_G(a), replace P(u|pa_G(u)) by P(u|a=assigned_value,pa_G(u)\\{a}); then remove all intervention nodes.",
+    "expected_children": {
+      "VMCH": [
+        "VTUB"
+      ]
+    },
+    "verified_children": {
+      "VMCH": [
+        "VTUB"
+      ]
+    },
+    "alarm_specialization": "ch_G(VMCH)={VTUB}; therefore the generic transform slices VTUB to P(VTUB|DISC,VMCH=NORMAL).",
+    "random_node_set": [
+      "CVP",
+      "PCWP",
+      "HIST",
+      "TPR",
+      "BP",
+      "CO",
+      "HRBP",
+      "HREK",
+      "HRSA",
+      "PAP",
+      "SAO2",
+      "FIO2",
+      "PRSS",
+      "ECO2",
+      "MINV",
+      "MVS",
+      "HYP",
+      "LVF",
+      "APL",
+      "ANES",
+      "PMB",
+      "INT",
+      "KINK",
+      "DISC",
+      "LVV",
+      "STKV",
+      "CCHL",
+      "ERLO",
+      "HR",
+      "ERCA",
+      "SHNT",
+      "PVS",
+      "ACO2",
+      "VALV",
+      "VLNG",
+      "VTUB"
+    ],
+    "condition": {
+      "PRSS": "NORMAL",
+      "ECO2": "NORMAL"
+    },
+    "remaining_node_set": [
+      "CVP",
+      "PCWP",
+      "HIST",
+      "TPR",
+      "BP",
+      "CO",
+      "HRBP",
+      "HREK",
+      "HRSA",
+      "PAP",
+      "SAO2",
+      "FIO2",
+      "MINV",
+      "MVS",
+      "HYP",
+      "LVF",
+      "APL",
+      "ANES",
+      "PMB",
+      "INT",
+      "KINK",
+      "DISC",
+      "LVV",
+      "STKV",
+      "CCHL",
+      "ERLO",
+      "HR",
+      "ERCA",
+      "SHNT",
+      "PVS",
+      "ACO2",
+      "VALV",
+      "VLNG",
+      "VTUB"
+    ],
+    "graph_parents": {
+      "CVP": [
+        "LVV"
+      ],
+      "PCWP": [
+        "LVV"
+      ],
+      "HIST": [
+        "LVF"
+      ],
+      "TPR": [
+        "APL"
+      ],
+      "BP": [
+        "CO",
+        "TPR"
+      ],
+      "CO": [
+        "HR",
+        "STKV"
+      ],
+      "HRBP": [
+        "ERLO",
+        "HR"
+      ],
+      "HREK": [
+        "ERCA",
+        "HR"
+      ],
+      "HRSA": [
+        "ERCA",
+        "HR"
+      ],
+      "PAP": [
+        "PMB"
+      ],
+      "SAO2": [
+        "PVS",
+        "SHNT"
+      ],
+      "FIO2": [],
+      "PRSS": [
+        "INT",
+        "KINK",
+        "VTUB"
+      ],
+      "ECO2": [
+        "ACO2",
+        "VLNG"
+      ],
+      "MINV": [
+        "INT",
+        "VLNG"
+      ],
+      "MVS": [],
+      "HYP": [],
+      "LVF": [],
+      "APL": [],
+      "ANES": [],
+      "PMB": [],
+      "INT": [],
+      "KINK": [],
+      "DISC": [],
+      "LVV": [
+        "HYP",
+        "LVF"
+      ],
+      "STKV": [
+        "HYP",
+        "LVF"
+      ],
+      "CCHL": [
+        "ACO2",
+        "ANES",
+        "SAO2",
+        "TPR"
+      ],
+      "ERLO": [],
+      "HR": [
+        "CCHL"
+      ],
+      "ERCA": [],
+      "SHNT": [
+        "INT",
+        "PMB"
+      ],
+      "PVS": [
+        "FIO2",
+        "VALV"
+      ],
+      "ACO2": [
+        "VALV"
+      ],
+      "VALV": [
+        "INT",
+        "VLNG"
+      ],
+      "VLNG": [
+        "INT",
+        "KINK",
+        "VTUB"
+      ],
+      "VTUB": [
+        "DISC"
+      ]
+    },
+    "orders": [
+      {
+        "id": 1,
+        "beta_do": [
+          "ANES",
+          "APL",
+          "DISC",
+          "ERLO",
+          "FIO2",
+          "MVS",
+          "ERCA",
+          "HYP",
+          "KINK",
+          "PMB",
+          "PAP",
+          "TPR",
+          "VTUB",
+          "LVF",
+          "HIST",
+          "STKV",
+          "LVV",
+          "CVP",
+          "PCWP",
+          "INT",
+          "PRSS",
+          "SHNT",
+          "VLNG",
+          "MINV",
+          "VALV",
+          "PVS",
+          "SAO2",
+          "ACO2",
+          "ECO2",
+          "CCHL",
+          "HR",
+          "HRBP",
+          "HREK",
+          "HRSA",
+          "CO",
+          "BP"
+        ],
+        "alpha_r_do": [
+          "ANES",
+          "APL",
+          "DISC",
+          "ERLO",
+          "FIO2",
+          "MVS",
+          "ERCA",
+          "HYP",
+          "KINK",
+          "PMB",
+          "PAP",
+          "TPR",
+          "VTUB",
+          "LVF",
+          "HIST",
+          "STKV",
+          "LVV",
+          "CVP",
+          "PCWP",
+          "INT",
+          "SHNT",
+          "VLNG",
+          "MINV",
+          "VALV",
+          "PVS",
+          "SAO2",
+          "ACO2",
+          "CCHL",
+          "HR",
+          "HRBP",
+          "HREK",
+          "HRSA",
+          "CO",
+          "BP"
+        ],
+        "hr_do_parents": {
+          "ANES": [],
+          "APL": [],
+          "DISC": [],
+          "ERLO": [],
+          "FIO2": [],
+          "MVS": [],
+          "ERCA": [],
+          "HYP": [],
+          "KINK": [
+            "DISC"
+          ],
+          "PMB": [],
+          "PAP": [
+            "PMB"
+          ],
+          "TPR": [
+            "APL"
+          ],
+          "VTUB": [
+            "DISC",
+            "KINK"
+          ],
+          "LVF": [],
+          "HIST": [
+            "LVF"
+          ],
+          "STKV": [
+            "HYP",
+            "LVF"
+          ],
+          "LVV": [
+            "HYP",
+            "LVF"
+          ],
+          "CVP": [
+            "LVV"
+          ],
+          "PCWP": [
+            "LVV"
+          ],
+          "INT": [
+            "KINK",
+            "VTUB"
+          ],
+          "SHNT": [
+            "PMB",
+            "INT"
+          ],
+          "VLNG": [
+            "KINK",
+            "VTUB",
+            "INT"
+          ],
+          "MINV": [
+            "INT",
+            "VLNG"
+          ],
+          "VALV": [
+            "INT",
+            "VLNG"
+          ],
+          "PVS": [
+            "FIO2",
+            "VALV"
+          ],
+          "SAO2": [
+            "SHNT",
+            "PVS"
+          ],
+          "ACO2": [
+            "VLNG",
+            "VALV"
+          ],
+          "CCHL": [
+            "ANES",
+            "TPR",
+            "SAO2",
+            "ACO2"
+          ],
+          "HR": [
+            "CCHL"
+          ],
+          "HRBP": [
+            "ERLO",
+            "HR"
+          ],
+          "HREK": [
+            "ERCA",
+            "HR"
+          ],
+          "HRSA": [
+            "ERCA",
+            "HR"
+          ],
+          "CO": [
+            "STKV",
+            "HR"
+          ],
+          "BP": [
+            "TPR",
+            "CO"
+          ]
+        },
+        "hr_do_edge_count": 44,
+        "fill_edge_count": 5,
+        "parameter_dimension": 419,
+        "fill_edges": [
+          "DISC->KINK",
+          "KINK->INT",
+          "KINK->VTUB",
+          "VLNG->ACO2",
+          "VTUB->INT"
+        ]
+      },
+      {
+        "id": 2,
+        "beta_do": [
+          "PMB",
+          "PAP",
+          "MVS",
+          "LVF",
+          "KINK",
+          "INT",
+          "SHNT",
+          "HYP",
+          "STKV",
+          "LVV",
+          "PCWP",
+          "HIST",
+          "FIO2",
+          "ERLO",
+          "ERCA",
+          "DISC",
+          "VTUB",
+          "VLNG",
+          "VALV",
+          "PVS",
+          "SAO2",
+          "PRSS",
+          "MINV",
+          "CVP",
+          "APL",
+          "TPR",
+          "ANES",
+          "ACO2",
+          "ECO2",
+          "CCHL",
+          "HR",
+          "HRSA",
+          "HREK",
+          "HRBP",
+          "CO",
+          "BP"
+        ],
+        "alpha_r_do": [
+          "PMB",
+          "PAP",
+          "MVS",
+          "LVF",
+          "KINK",
+          "INT",
+          "SHNT",
+          "HYP",
+          "STKV",
+          "LVV",
+          "PCWP",
+          "HIST",
+          "FIO2",
+          "ERLO",
+          "ERCA",
+          "DISC",
+          "VTUB",
+          "VLNG",
+          "VALV",
+          "PVS",
+          "SAO2",
+          "MINV",
+          "CVP",
+          "APL",
+          "TPR",
+          "ANES",
+          "ACO2",
+          "CCHL",
+          "HR",
+          "HRSA",
+          "HREK",
+          "HRBP",
+          "CO",
+          "BP"
+        ],
+        "hr_do_parents": {
+          "PMB": [],
+          "PAP": [
+            "PMB"
+          ],
+          "MVS": [],
+          "LVF": [],
+          "KINK": [],
+          "INT": [
+            "KINK"
+          ],
+          "SHNT": [
+            "PMB",
+            "INT"
+          ],
+          "HYP": [],
+          "STKV": [
+            "LVF",
+            "HYP"
+          ],
+          "LVV": [
+            "LVF",
+            "HYP"
+          ],
+          "PCWP": [
+            "LVV"
+          ],
+          "HIST": [
+            "LVF"
+          ],
+          "FIO2": [],
+          "ERLO": [],
+          "ERCA": [],
+          "DISC": [
+            "KINK",
+            "INT"
+          ],
+          "VTUB": [
+            "KINK",
+            "INT",
+            "DISC"
+          ],
+          "VLNG": [
+            "KINK",
+            "INT",
+            "VTUB"
+          ],
+          "VALV": [
+            "INT",
+            "VLNG"
+          ],
+          "PVS": [
+            "FIO2",
+            "VALV"
+          ],
+          "SAO2": [
+            "SHNT",
+            "PVS"
+          ],
+          "MINV": [
+            "INT",
+            "VLNG"
+          ],
+          "CVP": [
+            "LVV"
+          ],
+          "APL": [],
+          "TPR": [
+            "APL"
+          ],
+          "ANES": [],
+          "ACO2": [
+            "VLNG",
+            "VALV"
+          ],
+          "CCHL": [
+            "SAO2",
+            "TPR",
+            "ANES",
+            "ACO2"
+          ],
+          "HR": [
+            "CCHL"
+          ],
+          "HRSA": [
+            "ERCA",
+            "HR"
+          ],
+          "HREK": [
+            "ERCA",
+            "HR"
+          ],
+          "HRBP": [
+            "ERLO",
+            "HR"
+          ],
+          "CO": [
+            "STKV",
+            "HR"
+          ],
+          "BP": [
+            "TPR",
+            "CO"
+          ]
+        },
+        "hr_do_edge_count": 45,
+        "fill_edge_count": 6,
+        "parameter_dimension": 435,
+        "fill_edges": [
+          "INT->DISC",
+          "INT->VTUB",
+          "KINK->DISC",
+          "KINK->INT",
+          "KINK->VTUB",
+          "VLNG->ACO2"
+        ]
+      },
+      {
+        "id": 3,
+        "beta_do": [
+          "INT",
+          "LVF",
+          "PMB",
+          "KINK",
+          "HYP",
+          "LVV",
+          "ERCA",
+          "STKV",
+          "SHNT",
+          "MVS",
+          "FIO2",
+          "ERLO",
+          "DISC",
+          "VTUB",
+          "VLNG",
+          "VALV",
+          "ACO2",
+          "PVS",
+          "SAO2",
+          "APL",
+          "TPR",
+          "ANES",
+          "CCHL",
+          "HR",
+          "CO",
+          "PRSS",
+          "PCWP",
+          "PAP",
+          "MINV",
+          "HRSA",
+          "HREK",
+          "HRBP",
+          "HIST",
+          "ECO2",
+          "CVP",
+          "BP"
+        ],
+        "alpha_r_do": [
+          "INT",
+          "LVF",
+          "PMB",
+          "KINK",
+          "HYP",
+          "LVV",
+          "ERCA",
+          "STKV",
+          "SHNT",
+          "MVS",
+          "FIO2",
+          "ERLO",
+          "DISC",
+          "VTUB",
+          "VLNG",
+          "VALV",
+          "ACO2",
+          "PVS",
+          "SAO2",
+          "APL",
+          "TPR",
+          "ANES",
+          "CCHL",
+          "HR",
+          "CO",
+          "PCWP",
+          "PAP",
+          "MINV",
+          "HRSA",
+          "HREK",
+          "HRBP",
+          "HIST",
+          "CVP",
+          "BP"
+        ],
+        "hr_do_parents": {
+          "INT": [],
+          "LVF": [],
+          "PMB": [],
+          "KINK": [
+            "INT"
+          ],
+          "HYP": [],
+          "LVV": [
+            "LVF",
+            "HYP"
+          ],
+          "ERCA": [],
+          "STKV": [
+            "LVF",
+            "HYP"
+          ],
+          "SHNT": [
+            "INT",
+            "PMB"
+          ],
+          "MVS": [],
+          "FIO2": [],
+          "ERLO": [],
+          "DISC": [
+            "INT",
+            "KINK"
+          ],
+          "VTUB": [
+            "INT",
+            "KINK",
+            "DISC"
+          ],
+          "VLNG": [
+            "INT",
+            "KINK",
+            "VTUB"
+          ],
+          "VALV": [
+            "INT",
+            "VLNG"
+          ],
+          "ACO2": [
+            "VLNG",
+            "VALV"
+          ],
+          "PVS": [
+            "FIO2",
+            "VALV"
+          ],
+          "SAO2": [
+            "SHNT",
+            "PVS"
+          ],
+          "APL": [],
+          "TPR": [
+            "APL"
+          ],
+          "ANES": [],
+          "CCHL": [
+            "ACO2",
+            "SAO2",
+            "TPR",
+            "ANES"
+          ],
+          "HR": [
+            "CCHL"
+          ],
+          "CO": [
+            "STKV",
+            "HR"
+          ],
+          "PCWP": [
+            "LVV"
+          ],
+          "PAP": [
+            "PMB"
+          ],
+          "MINV": [
+            "INT",
+            "VLNG"
+          ],
+          "HRSA": [
+            "ERCA",
+            "HR"
+          ],
+          "HREK": [
+            "ERCA",
+            "HR"
+          ],
+          "HRBP": [
+            "ERLO",
+            "HR"
+          ],
+          "HIST": [
+            "LVF"
+          ],
+          "CVP": [
+            "LVV"
+          ],
+          "BP": [
+            "TPR",
+            "CO"
+          ]
+        },
+        "hr_do_edge_count": 45,
+        "fill_edge_count": 6,
+        "parameter_dimension": 435,
+        "fill_edges": [
+          "INT->DISC",
+          "INT->KINK",
+          "INT->VTUB",
+          "KINK->DISC",
+          "KINK->VTUB",
+          "VLNG->ACO2"
+        ]
+      },
+      {
+        "id": 4,
+        "beta_do": [
+          "ANES",
+          "APL",
+          "DISC",
+          "ERCA",
+          "ERLO",
+          "FIO2",
+          "HYP",
+          "INT",
+          "KINK",
+          "LVF",
+          "HIST",
+          "LVV",
+          "CVP",
+          "MVS",
+          "PCWP",
+          "PMB",
+          "PAP",
+          "SHNT",
+          "STKV",
+          "TPR",
+          "VTUB",
+          "PRSS",
+          "VLNG",
+          "MINV",
+          "VALV",
+          "ACO2",
+          "ECO2",
+          "PVS",
+          "SAO2",
+          "CCHL",
+          "HR",
+          "CO",
+          "BP",
+          "HRBP",
+          "HREK",
+          "HRSA"
+        ],
+        "alpha_r_do": [
+          "ANES",
+          "APL",
+          "DISC",
+          "ERCA",
+          "ERLO",
+          "FIO2",
+          "HYP",
+          "INT",
+          "KINK",
+          "LVF",
+          "HIST",
+          "LVV",
+          "CVP",
+          "MVS",
+          "PCWP",
+          "PMB",
+          "PAP",
+          "SHNT",
+          "STKV",
+          "TPR",
+          "VTUB",
+          "VLNG",
+          "MINV",
+          "VALV",
+          "ACO2",
+          "PVS",
+          "SAO2",
+          "CCHL",
+          "HR",
+          "CO",
+          "BP",
+          "HRBP",
+          "HREK",
+          "HRSA"
+        ],
+        "hr_do_parents": {
+          "ANES": [],
+          "APL": [],
+          "DISC": [],
+          "ERCA": [],
+          "ERLO": [],
+          "FIO2": [],
+          "HYP": [],
+          "INT": [
+            "DISC"
+          ],
+          "KINK": [
+            "DISC",
+            "INT"
+          ],
+          "LVF": [],
+          "HIST": [
+            "LVF"
+          ],
+          "LVV": [
+            "HYP",
+            "LVF"
+          ],
+          "CVP": [
+            "LVV"
+          ],
+          "MVS": [],
+          "PCWP": [
+            "LVV"
+          ],
+          "PMB": [],
+          "PAP": [
+            "PMB"
+          ],
+          "SHNT": [
+            "INT",
+            "PMB"
+          ],
+          "STKV": [
+            "HYP",
+            "LVF"
+          ],
+          "TPR": [
+            "APL"
+          ],
+          "VTUB": [
+            "DISC",
+            "INT",
+            "KINK"
+          ],
+          "VLNG": [
+            "INT",
+            "KINK",
+            "VTUB"
+          ],
+          "MINV": [
+            "INT",
+            "VLNG"
+          ],
+          "VALV": [
+            "INT",
+            "VLNG"
+          ],
+          "ACO2": [
+            "VLNG",
+            "VALV"
+          ],
+          "PVS": [
+            "FIO2",
+            "VALV"
+          ],
+          "SAO2": [
+            "SHNT",
+            "PVS"
+          ],
+          "CCHL": [
+            "ANES",
+            "TPR",
+            "ACO2",
+            "SAO2"
+          ],
+          "HR": [
+            "CCHL"
+          ],
+          "CO": [
+            "STKV",
+            "HR"
+          ],
+          "BP": [
+            "TPR",
+            "CO"
+          ],
+          "HRBP": [
+            "ERLO",
+            "HR"
+          ],
+          "HREK": [
+            "ERCA",
+            "HR"
+          ],
+          "HRSA": [
+            "ERCA",
+            "HR"
+          ]
+        },
+        "hr_do_edge_count": 45,
+        "fill_edge_count": 6,
+        "parameter_dimension": 435,
+        "fill_edges": [
+          "DISC->INT",
+          "DISC->KINK",
+          "INT->KINK",
+          "INT->VTUB",
+          "KINK->VTUB",
+          "VLNG->ACO2"
+        ]
+      }
+    ]
+  },
+  "pilot": {
+    "parameter_ids": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "sample_sizes": [
+      100,
+      1000,
+      10000
+    ],
+    "repetitions": 10,
+    "timing_excludes": [
+      "network definition",
+      "protocol serialization",
+      "CSV/JSON writing"
+    ]
+  },
+  "pilot_results": {
+    "wall_seconds": 29.121116064000034,
+    "machine": {
+      "platform": "Linux-6.18.35-x86_64-with-glibc2.39",
+      "python": "3.12.13",
+      "numpy": "2.3.5",
+      "processor": "x86_64"
+    },
+    "diagnostics": [
+      {
+        "parameter_id": 0,
+        "known_fcgr_max_tvd": 6.245004513516506e-16,
+        "known_order_max_tvd": 1.734723475976807e-16,
+        "known_ic_tvd": 0.07070222411431487,
+        "known_oracle_ve_max_ae": 4.440892098500626e-16,
+        "do_fcgr_max_tvd": 2.636779683484747e-16,
+        "do_oracle_ve_max_ae": 1.1102230246251565e-16,
+        "finite_all_tvd_mean_timing_only": 0.046506466292487045
+      },
+      {
+        "parameter_id": 1,
+        "known_fcgr_max_tvd": 4.978656376053436e-16,
+        "known_order_max_tvd": 8.673617379884035e-17,
+        "known_ic_tvd": 0.014053163546004426,
+        "known_oracle_ve_max_ae": 3.3306690738754696e-16,
+        "do_fcgr_max_tvd": 2.3678975447083417e-16,
+        "do_oracle_ve_max_ae": 1.1102230246251565e-16,
+        "finite_all_tvd_mean_timing_only": 0.037636522851221384
+      },
+      {
+        "parameter_id": 2,
+        "known_fcgr_max_tvd": 9.645062526431047e-16,
+        "known_order_max_tvd": 1.3357370765021415e-16,
+        "known_ic_tvd": 0.08696109902898846,
+        "known_oracle_ve_max_ae": 7.216449660063518e-16,
+        "do_fcgr_max_tvd": 2.498001805406602e-16,
+        "do_oracle_ve_max_ae": 1.1102230246251565e-16,
+        "finite_all_tvd_mean_timing_only": 0.04952316210519752
+      },
+      {
+        "parameter_id": 3,
+        "known_fcgr_max_tvd": 6.240667704826564e-16,
+        "known_order_max_tvd": 4.705437428587089e-17,
+        "known_ic_tvd": 0.044528964732631626,
+        "known_oracle_ve_max_ae": 5.551115123125783e-16,
+        "do_fcgr_max_tvd": 6.657001339060997e-17,
+        "do_oracle_ve_max_ae": 1.3877787807814457e-17,
+        "finite_all_tvd_mean_timing_only": 0.04603367264933196
+      },
+      {
+        "parameter_id": 4,
+        "known_fcgr_max_tvd": 3.651592916931179e-16,
+        "known_order_max_tvd": 2.749536709423239e-16,
+        "known_ic_tvd": 0.004136082523332962,
+        "known_oracle_ve_max_ae": 1.6653345369377348e-16,
+        "do_fcgr_max_tvd": 1.8821749714348357e-16,
+        "do_oracle_ve_max_ae": 1.6653345369377348e-16,
+        "finite_all_tvd_mean_timing_only": 0.038863423378965437
+      }
+    ],
+    "timing_summary": [
+      {
+        "phase": "do_j_and_four_fcgr",
+        "sample_size": "all",
+        "runs": 5,
+        "mean_seconds": 1.2987082224001825,
+        "median_seconds": 1.2280670150003061,
+        "p95_seconds": 1.4566112061999774,
+        "total_seconds": 6.493541112000912
+      },
+      {
+        "phase": "do_j_independent_enumeration",
+        "sample_size": "all",
+        "runs": 5,
+        "mean_seconds": 0.0003804517999924428,
+        "median_seconds": 0.0003586630000427249,
+        "p95_seconds": 0.00046323320002557007,
+        "total_seconds": 0.0019022589999622141
+      },
+      {
+        "phase": "finite_j_sample_fit_query",
+        "sample_size": 100,
+        "runs": 50,
+        "mean_seconds": 0.011600358779969611,
+        "median_seconds": 0.010474186000010377,
+        "p95_seconds": 0.01781699174991899,
+        "total_seconds": 0.5800179389984805
+      },
+      {
+        "phase": "finite_j_sample_fit_query",
+        "sample_size": 1000,
+        "runs": 50,
+        "mean_seconds": 0.012929212339959122,
+        "median_seconds": 0.012108482500025275,
+        "p95_seconds": 0.016741163199935717,
+        "total_seconds": 0.6464606169979561
+      },
+      {
+        "phase": "finite_j_sample_fit_query",
+        "sample_size": 10000,
+        "runs": 50,
+        "mean_seconds": 0.03444978737998099,
+        "median_seconds": 0.03165085499995257,
+        "p95_seconds": 0.0474953945499692,
+        "total_seconds": 1.7224893689990495
+      },
+      {
+        "phase": "finite_shared_c_sample_five_fit_query",
+        "sample_size": 100,
+        "runs": 50,
+        "mean_seconds": 0.05926625577996674,
+        "median_seconds": 0.056781894000096145,
+        "p95_seconds": 0.07090965070010496,
+        "total_seconds": 2.963312788998337
+      },
+      {
+        "phase": "finite_shared_c_sample_five_fit_query",
+        "sample_size": 1000,
+        "runs": 50,
+        "mean_seconds": 0.06156467261994294,
+        "median_seconds": 0.05722747699996944,
+        "p95_seconds": 0.08429470769999622,
+        "total_seconds": 3.078233630997147
+      },
+      {
+        "phase": "finite_shared_c_sample_five_fit_query",
+        "sample_size": 10000,
+        "runs": 50,
+        "mean_seconds": 0.08833761785998831,
+        "median_seconds": 0.08437498999978743,
+        "p95_seconds": 0.11804593759989072,
+        "total_seconds": 4.416880892999416
+      },
+      {
+        "phase": "known_fcgr_1_compile_query",
+        "sample_size": "all",
+        "runs": 5,
+        "mean_seconds": 0.3578819473999829,
+        "median_seconds": 0.3553804170001058,
+        "p95_seconds": 0.4085772999997971,
+        "total_seconds": 1.7894097369999145
+      },
+      {
+        "phase": "known_fcgr_2_compile_query",
+        "sample_size": "all",
+        "runs": 5,
+        "mean_seconds": 0.37432785659993895,
+        "median_seconds": 0.37496746299984807,
+        "p95_seconds": 0.4397363715997926,
+        "total_seconds": 1.8716392829996948
+      },
+      {
+        "phase": "known_fcgr_3_compile_query",
+        "sample_size": "all",
+        "runs": 5,
+        "mean_seconds": 0.3589191607999965,
+        "median_seconds": 0.3412386609998066,
+        "p95_seconds": 0.42464397019994066,
+        "total_seconds": 1.7945958039999823
+      },
+      {
+        "phase": "known_fcgr_4_compile_query",
+        "sample_size": "all",
+        "runs": 5,
+        "mean_seconds": 0.33211361219991886,
+        "median_seconds": 0.3336203869998826,
+        "p95_seconds": 0.3549782633999712,
+        "total_seconds": 1.6605680609995943
+      },
+      {
+        "phase": "known_ic_compile_query",
+        "sample_size": "all",
+        "runs": 5,
+        "mean_seconds": 0.36675271000003706,
+        "median_seconds": 0.3422222609997334,
+        "p95_seconds": 0.4161196848002874,
+        "total_seconds": 1.8337635500001852
+      },
+      {
+        "phase": "known_j_independent_enumeration",
+        "sample_size": "all",
+        "runs": 5,
+        "mean_seconds": 0.0020593940001162993,
+        "median_seconds": 0.0020068870003342454,
+        "p95_seconds": 0.002265339599853178,
+        "total_seconds": 0.010296970000581496
+      },
+      {
+        "phase": "known_j_ve_query",
+        "sample_size": "all",
+        "runs": 5,
+        "mean_seconds": 0.009435809600108768,
+        "median_seconds": 0.009210597000219423,
+        "p95_seconds": 0.010423769800127047,
+        "total_seconds": 0.047179048000543844
+      },
+      {
+        "phase": "random_cpt_generation",
+        "sample_size": "all",
+        "runs": 5,
+        "mean_seconds": 0.0017203030000928266,
+        "median_seconds": 0.0005086700002721045,
+        "p95_seconds": 0.005415834400173479,
+        "total_seconds": 0.008601515000464133
+      }
+    ]
+  }
+}

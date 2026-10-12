@@ -1,0 +1,23 @@
+{
+  "seed": 20261007,
+  "orders": 100,
+  "replicates": 20,
+  "sample_sizes": [100, 1000, 5000],
+  "pilot_size": 500,
+  "validation_size": 1000,
+  "iss": 10.0,
+  "delta": 0.05,
+  "timing_repeats": 10,
+  "networks": {
+    "child": {
+      "evidence": {"ChestXray": "Normal", "HypoxiaInO2": "Mild"},
+      "query": ["Disease", "Sick"],
+      "event": ["TGA", "yes"]
+    },
+    "alarm": {
+      "evidence": {"PRESS": "NORMAL", "EXPCO2": "NORMAL"},
+      "query": ["INTUBATION", "DISCONNECT", "MINVOLSET"],
+      "event": ["ONESIDED", "TRUE", "NORMAL"]
+    }
+  }
+}

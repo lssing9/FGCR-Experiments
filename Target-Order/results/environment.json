@@ -1,0 +1,21 @@
+{
+  "python": "3.11.15 | packaged by Anaconda, Inc. | (main, Jun 11 2026, 15:12:53) [MSC v.1942 64 bit (AMD64)]",
+  "numpy": "2.4.6",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "processor": "Intel64 Family 6 Model 197 Stepping 2, GenuineIntel",
+  "machine": "AMD64",
+  "seed": 20261007,
+  "config_sha256": "4d9fe0f0d9a512a1bffbd7a91fe196c7520a8e865bcb2b973029dbf895947c5e",
+  "timing": "perf_counter_ns; warmup then 10 individual calls per order; constructor only",
+  "data": {
+    "child": {
+      "sha256": "2bc3236dcbdbf9c9f1bbdeb060aa93c0bdee389d23a549b7248b9d89ed8a980c",
+      "url": "https://www.bnlearn.com/bnrepository/child/child.bif.gz"
+    },
+    "alarm": {
+      "sha256": "f5860caa7137b5817e0c4f169cce0f1451ce6c246b96f5ce4fb4a8167993be29",
+      "url": "https://www.bnlearn.com/bnrepository/alarm/alarm.bif.gz"
+    }
+  },
+  "scripts": {}
+}

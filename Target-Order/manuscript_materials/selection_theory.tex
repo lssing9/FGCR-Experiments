@@ -1,0 +1,51 @@
+\subsubsection{A Validation-Based Order-Selection Guarantee}
+\label{subsubsec:validated-order}
+The pilot-quantile score is a heuristic. A finite-candidate procedure with
+an explicit excess-risk guarantee is available by using held-out log loss.
+It applies equally to graphs constructed by FGCR, ROS, or an exact
+ordered-independence oracle.
+
+\begin{theorem}[Finite-Candidate Validation Oracle Inequality]
+\label{thm:validation-selection}
+Condition on all order generation, pilot data, and fitting data.
+Let $\widehat Q_1,\ldots,\widehat Q_K$ be the resulting strictly positive
+joint estimates on $R$, and let $Z_1,\ldots,Z_m$ be independent of these
+estimates and i.i.d.\ from $P^C$. Suppose
+$0\leq-\log\widehat Q_k(z)\leq B$ for all $k,z$, with a finite
+$B$ determined before validation. Set
+\[
+\widehat k\in\argmin_{1\leq k\leq K}
+\frac1m\sum_{i=1}^m-\log\widehat Q_k(Z_i).
+\]
+With conditional probability at least $1-\delta$,
+\begin{equation}
+D_{\rm KL}(P^C\Vert\widehat Q_{\widehat k})
+\leq \min_{1\leq k\leq K}D_{\rm KL}(P^C\Vert\widehat Q_k)
+ +2B\sqrt{\frac{\log(2K/\delta)}{2m}}.
+\label{eq:selection-oracle}
+\end{equation}
+\end{theorem}
+\begin{proof}
+Conditional on the fitted candidates, Hoeffding's inequality and a union
+bound give $|\widehat L_k-L_k|\leq\eta$ simultaneously for all $k$,
+where $\eta=B\sqrt{\log(2K/\delta)/(2m)}$ and
+$L_k=\mathbb E_{P^C}[-\log\widehat Q_k(Z)]$.
+If $k^\star$ minimizes $L_k$, then
+$L_{\widehat k}\leq\widehat L_{\widehat k}+\eta
+\leq\widehat L_{k^\star}+\eta\leq L_{k^\star}+2\eta$.
+Subtract the common entropy $H(P^C)$ to obtain the KL inequality.
+\end{proof}
+
+For BDeu fits a computable choice is
+\[
+B=\max_k\sum_{v\in R}
+\log\frac{1}{\min_{a,x}\widehat p_{k,v}(x\mid a)}.
+\]
+Strictly positive pseudocounts make this finite even with empty cells.
+The guarantee compares the realized fitted candidates, not an unknown
+globally optimal topological order; it does not eliminate the fitting
+error of any candidate. Its dependence on $B$ can also be conservative.
+The selected estimate must not be refitted on the validation observations
+and then assigned the same certificate without further analysis.
+Duplicates may be removed before validation: only distinct fitted
+distributions need enter $K$.

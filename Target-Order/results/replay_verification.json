@@ -1,0 +1,7 @@
+{
+  "status": "passed",
+  "seed_replay_networks": 2,
+  "raw_fit_recomputations": 171,
+  "summary_raw_consistency": "passed",
+  "source_hashes": "passed"
+}

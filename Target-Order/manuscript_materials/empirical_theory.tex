@@ -1,0 +1,74 @@
+\subsubsection{A Fully Computable Probability-Weighted Confidence Bound}
+\label{subsubsec:empirical-weighted}
+Proposition~\ref{prop:cell-weighted} weights local losses by unknown true
+parent-cell probabilities. Replacing those probabilities by raw frequencies
+alone is not valid. The following result adds an explicit confidence
+correction and remains valid when some true CPT entries or parent-cell
+masses are zero.
+
+\begin{theorem}[Empirical Weighted KL Certificate]
+\label{thm:empirical-certificate}
+Fix $H_R$ independently of its $n\geq1$ fitting observations and suppose
+that $P^C$ factorizes over $H_R$. Use BDeu with fixed $\mathrm{ISS}>0$.
+Let $\widehat\pi_{v,a}=N_{v,a}/n$ and set
+\[
+t_n=\sqrt{\frac{\log(4Q_H/\delta)}{2n}}.
+\]
+Compute the local bound $B_{v,a}$ of
+Proposition~\ref{prop:cell-weighted} using
+$\ell=\log(4L_H/\delta)$ instead of $\log(2L_H/\delta)$.
+For each node define the nonempty confidence set
+\[
+\mathcal W_v=
+\left\{w\in[0,1]^{q_v}:\ \sum_a w_a=1,\
+ |w_a-\widehat\pi_{v,a}|\leq t_n\text{ for every }a\right\}.
+\]
+Then the entirely sample-computable quantity
+\begin{equation}
+U_n(\delta)=\sum_{v\in R}\max_{w\in\mathcal W_v}
+                 \sum_a w_a B_{v,a}
+\label{eq:empirical-certificate}
+\end{equation}
+satisfies
+$\Pr\{D_{\rm KL}(P^C\Vert\widehat Q_{H_R,n}^C)\leq U_n(\delta)\}
+\geq1-\delta$. No unknown $\pi_{\min}$ or $\theta_{\min}$ occurs in
+the certificate.
+\end{theorem}
+\begin{proof}
+Use the proof of Proposition~\ref{prop:cell-weighted} with failure
+budget $\delta/2$ to bound every local KL loss by $B_{v,a}$
+simultaneously. Separately, Hoeffding's inequality for the Bernoulli
+indicator of each parent configuration gives
+\[
+\Pr\{|\widehat\pi_{v,a}-\pi_{v,a}|>t_n\}
+\leq 2e^{-2nt_n^2}=\frac{\delta}{2Q_H}.
+\]
+Union bounding over all $Q_H$ cells gives
+$(\pi_{v,a})_a\in\mathcal W_v$ for every node with failure probability
+at most $\delta/2$. The empirical vector itself belongs to
+$\mathcal W_v$, so the optimization problem is never empty.
+On the intersection of these two events, insert the local bounds into
+the exact KL decomposition and maximize over a set containing each
+true weight vector. Another union bound proves the claim.
+The two events may use the same observations; no independence between
+estimated weights and local losses is assumed.
+\end{proof}
+
+The maximization is a simple bounded-simplex linear program. Initialize
+$w_a=\max\{0,\widehat\pi_{v,a}-t_n\}$, sort cells by descending
+$B_{v,a}$, and allocate the remaining mass to that order up to
+$\min\{1,\widehat\pi_{v,a}+t_n\}$. An exchange argument proves
+optimality: moving available mass from a smaller coefficient to a
+larger one never reduces the objective. Its cost is
+$O(\sum_v q_v\log q_v)$, in addition to computing the local bounds.
+Thus the certificate can be evaluated without an unknown-distribution
+oracle. It is still potentially conservative; computability does not
+imply a useful numerical rate at moderate $n$.
+
+For $K$ candidate graphs fixed before fitting, applying the theorem at
+$\delta/K$ makes all certificates simultaneous. Any data-selected
+candidate, including the one minimizing its certificate, then satisfies
+its displayed bound. This certifies the selected estimate but does not
+assert that its true risk minimizes the candidate risks.
+The next result provides a different guarantee using an independent
+validation sample.

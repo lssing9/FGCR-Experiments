@@ -1,0 +1,528 @@
+NETWORK child
+Distinct conditional graphs: 5
+child replicate 1
+child replicate 2
+child replicate 3
+child replicate 4
+child replicate 5
+child replicate 6
+child replicate 7
+child replicate 8
+child replicate 9
+child replicate 10
+child replicate 11
+child replicate 12
+child replicate 13
+child replicate 14
+child replicate 15
+child replicate 16
+child replicate 17
+child replicate 18
+child replicate 19
+child replicate 20
+NETWORK alarm
+Distinct conditional graphs: 50
+alarm replicate 1
+alarm replicate 2
+alarm replicate 3
+alarm replicate 4
+alarm replicate 5
+alarm replicate 6
+alarm replicate 7
+alarm replicate 8
+alarm replicate 9
+alarm replicate 10
+alarm replicate 11
+alarm replicate 12
+alarm replicate 13
+alarm replicate 14
+alarm replicate 15
+alarm replicate 16
+alarm replicate 17
+alarm replicate 18
+alarm replicate 19
+alarm replicate 20
+{
+  "child": {
+    "nodes": 20,
+    "original_edges": 25,
+    "orders": 100,
+    "unique_full_orders": 100,
+    "unique_remaining_orders": 100,
+    "unique_graphs": 5,
+    "evidence_probability": 0.02331149731516781,
+    "event_probability": 0.06099390854575346,
+    "exact_query_max_abs_error": 8.326672684688674e-17,
+    "conditional_entropy": 10.595786770544677,
+    "dimension_min": 202,
+    "dimension_max": 310,
+    "constructor_ms_median": 0.021825,
+    "constructor_ms_q25": 0.0209875,
+    "constructor_ms_q75": 0.0230625,
+    "bounds": [
+      {
+        "n": 100,
+        "fits": 100,
+        "median_kl": 0.6485198550465174,
+        "median_oracle_bound": 38.28107843492643,
+        "median_empirical_bound": 44.783030011697875,
+        "uniform_applicable": 0,
+        "empirical_violations": 0,
+        "oracle_violations": 0
+      },
+      {
+        "n": 1000,
+        "fits": 100,
+        "median_kl": 0.10144701052708704,
+        "median_oracle_bound": 20.577507253567326,
+        "median_empirical_bound": 26.063380061502585,
+        "uniform_applicable": 0,
+        "empirical_violations": 0,
+        "oracle_violations": 0
+      },
+      {
+        "n": 5000,
+        "fits": 100,
+        "median_kl": 0.022609501893144923,
+        "median_oracle_bound": 11.386434112079389,
+        "median_empirical_bound": 14.30666153158894,
+        "uniform_applicable": 0,
+        "empirical_violations": 0,
+        "oracle_violations": 0
+      }
+    ],
+    "selection": [
+      {
+        "network": "child",
+        "n": 100,
+        "method": "empirical_bound",
+        "mean_kl": 0.6208929521552865,
+        "sd_kl": 0.06542041697726185,
+        "query_rmse": 0.01383305671134696,
+        "mean_excess_kl": 0.0
+      },
+      {
+        "network": "child",
+        "n": 100,
+        "method": "holdout",
+        "mean_kl": 0.6208929521552865,
+        "sd_kl": 0.06542041697726185,
+        "query_rmse": 0.01383305671134696,
+        "mean_excess_kl": 0.0
+      },
+      {
+        "network": "child",
+        "n": 100,
+        "method": "induced",
+        "mean_kl": 0.5925873620589599,
+        "sd_kl": 0.057345046452763504,
+        "query_rmse": 0.01383305671134696,
+        "mean_excess_kl": -0.028305590096326584
+      },
+      {
+        "network": "child",
+        "n": 100,
+        "method": "minimum_dimension",
+        "mean_kl": 0.6208929521552865,
+        "sd_kl": 0.06542041697726185,
+        "query_rmse": 0.01383305671134696,
+        "mean_excess_kl": 0.0
+      },
+      {
+        "network": "child",
+        "n": 100,
+        "method": "oracle_kl",
+        "mean_kl": 0.6208929521552865,
+        "sd_kl": 0.06542041697726185,
+        "query_rmse": 0.01383305671134696,
+        "mean_excess_kl": 0.0
+      },
+      {
+        "network": "child",
+        "n": 100,
+        "method": "pilot_heuristic",
+        "mean_kl": 0.6208929521552868,
+        "sd_kl": 0.06542041697726163,
+        "query_rmse": 0.013833056711346962,
+        "mean_excess_kl": 2.6645352591003756e-16
+      },
+      {
+        "network": "child",
+        "n": 100,
+        "method": "random_order",
+        "mean_kl": 0.700833660373147,
+        "sd_kl": 0.12408857646410142,
+        "query_rmse": 0.01383305671134696,
+        "mean_excess_kl": 0.07994070821786048
+      },
+      {
+        "network": "child",
+        "n": 1000,
+        "method": "empirical_bound",
+        "mean_kl": 0.0906424883406598,
+        "sd_kl": 0.012489141145833077,
+        "query_rmse": 0.006659981209542689,
+        "mean_excess_kl": 8.881784197001253e-17
+      },
+      {
+        "network": "child",
+        "n": 1000,
+        "method": "holdout",
+        "mean_kl": 0.09064248834065972,
+        "sd_kl": 0.01248914114583295,
+        "query_rmse": 0.00665998120954269,
+        "mean_excess_kl": 0.0
+      },
+      {
+        "network": "child",
+        "n": 1000,
+        "method": "induced",
+        "mean_kl": 0.11898555416035217,
+        "sd_kl": 0.008699719748575339,
+        "query_rmse": 0.006659981209542694,
+        "mean_excess_kl": 0.02834306581969246
+      },
+      {
+        "network": "child",
+        "n": 1000,
+        "method": "minimum_dimension",
+        "mean_kl": 0.09064248834065972,
+        "sd_kl": 0.01248914114583295,
+        "query_rmse": 0.00665998120954269,
+        "mean_excess_kl": 0.0
+      },
+      {
+        "network": "child",
+        "n": 1000,
+        "method": "oracle_kl",
+        "mean_kl": 0.09064248834065972,
+        "sd_kl": 0.01248914114583295,
+        "query_rmse": 0.00665998120954269,
+        "mean_excess_kl": 0.0
+      },
+      {
+        "network": "child",
+        "n": 1000,
+        "method": "pilot_heuristic",
+        "mean_kl": 0.0906424883406598,
+        "sd_kl": 0.012489141145833077,
+        "query_rmse": 0.0066599812095426885,
+        "mean_excess_kl": 8.881784197001253e-17
+      },
+      {
+        "network": "child",
+        "n": 1000,
+        "method": "random_order",
+        "mean_kl": 0.10512956389054251,
+        "sd_kl": 0.02378594540270559,
+        "query_rmse": 0.006659981209542689,
+        "mean_excess_kl": 0.0144870755498828
+      },
+      {
+        "network": "child",
+        "n": 5000,
+        "method": "empirical_bound",
+        "mean_kl": 0.02061192666805205,
+        "sd_kl": 0.002971507419488642,
+        "query_rmse": 0.003697702606378229,
+        "mean_excess_kl": 3.552713678800501e-16
+      },
+      {
+        "network": "child",
+        "n": 5000,
+        "method": "holdout",
+        "mean_kl": 0.020611926668051783,
+        "sd_kl": 0.0029715074194887536,
+        "query_rmse": 0.0036977026063782295,
+        "mean_excess_kl": 8.881784197001253e-17
+      },
+      {
+        "network": "child",
+        "n": 5000,
+        "method": "induced",
+        "mean_kl": 0.0650196058545867,
+        "sd_kl": 0.0021368170331327475,
+        "query_rmse": 0.003697702606378228,
+        "mean_excess_kl": 0.04440767918653501
+      },
+      {
+        "network": "child",
+        "n": 5000,
+        "method": "minimum_dimension",
+        "mean_kl": 0.020611926668051783,
+        "sd_kl": 0.0029715074194887536,
+        "query_rmse": 0.003697702606378228,
+        "mean_excess_kl": 8.881784197001253e-17
+      },
+      {
+        "network": "child",
+        "n": 5000,
+        "method": "oracle_kl",
+        "mean_kl": 0.020611926668051693,
+        "sd_kl": 0.0029715074194888286,
+        "query_rmse": 0.003697702606378228,
+        "mean_excess_kl": 0.0
+      },
+      {
+        "network": "child",
+        "n": 5000,
+        "method": "pilot_heuristic",
+        "mean_kl": 0.020611926668051873,
+        "sd_kl": 0.0029715074194887788,
+        "query_rmse": 0.0036977026063782278,
+        "mean_excess_kl": 1.7763568394002506e-16
+      },
+      {
+        "network": "child",
+        "n": 5000,
+        "method": "random_order",
+        "mean_kl": 0.024955393976315587,
+        "sd_kl": 0.005625092538814449,
+        "query_rmse": 0.0036977026063782273,
+        "mean_excess_kl": 0.004343467308263893
+      }
+    ],
+    "elapsed_seconds": 7.468884600006277
+  },
+  "alarm": {
+    "nodes": 37,
+    "original_edges": 46,
+    "orders": 100,
+    "unique_full_orders": 100,
+    "unique_remaining_orders": 100,
+    "unique_graphs": 50,
+    "evidence_probability": 0.005901138347334694,
+    "event_probability": 0.002050517348877214,
+    "exact_query_max_abs_error": 1.6653345369377348e-16,
+    "conditional_entropy": 9.80338568061112,
+    "dimension_min": 445,
+    "dimension_max": 673,
+    "constructor_ms_median": 0.045825000000000005,
+    "constructor_ms_q25": 0.043137499999999995,
+    "constructor_ms_q75": 0.047349999999999996,
+    "bounds": [
+      {
+        "n": 100,
+        "fits": 1000,
+        "median_kl": 1.0418554885194844,
+        "median_oracle_bound": 102.99676109332532,
+        "median_empirical_bound": 112.9036775858234,
+        "uniform_applicable": 0,
+        "empirical_violations": 0,
+        "oracle_violations": 0
+      },
+      {
+        "n": 1000,
+        "fits": 1000,
+        "median_kl": 0.15501698358606752,
+        "median_oracle_bound": 71.2983803079235,
+        "median_empirical_bound": 80.74025285656208,
+        "uniform_applicable": 0,
+        "empirical_violations": 0,
+        "oracle_violations": 0
+      },
+      {
+        "n": 5000,
+        "fits": 1000,
+        "median_kl": 0.03856592460276609,
+        "median_oracle_bound": 41.93863857557503,
+        "median_empirical_bound": 49.59275191877486,
+        "uniform_applicable": 0,
+        "empirical_violations": 0,
+        "oracle_violations": 0
+      }
+    ],
+    "selection": [
+      {
+        "network": "alarm",
+        "n": 100,
+        "method": "empirical_bound",
+        "mean_kl": 1.026773204034562,
+        "sd_kl": 0.06977870228640506,
+        "query_rmse": 0.004620162844231038,
+        "mean_excess_kl": 0.007514505294677854
+      },
+      {
+        "network": "alarm",
+        "n": 100,
+        "method": "holdout",
+        "mean_kl": 1.0204969807335011,
+        "sd_kl": 0.06885058982051472,
+        "query_rmse": 0.004560651417350478,
+        "mean_excess_kl": 0.0012382819936170187
+      },
+      {
+        "network": "alarm",
+        "n": 100,
+        "method": "induced",
+        "mean_kl": 1.1839405533149656,
+        "sd_kl": 0.06905648688986438,
+        "query_rmse": 0.001771111188278306,
+        "mean_excess_kl": 0.1646818545750815
+      },
+      {
+        "network": "alarm",
+        "n": 100,
+        "method": "minimum_dimension",
+        "mean_kl": 1.0293262929588516,
+        "sd_kl": 0.07049647321463588,
+        "query_rmse": 0.005198298287868113,
+        "mean_excess_kl": 0.010067594218967368
+      },
+      {
+        "network": "alarm",
+        "n": 100,
+        "method": "oracle_kl",
+        "mean_kl": 1.0192586987398844,
+        "sd_kl": 0.06870488387187829,
+        "query_rmse": 0.004653313994099587,
+        "mean_excess_kl": 0.0
+      },
+      {
+        "network": "alarm",
+        "n": 100,
+        "method": "pilot_heuristic",
+        "mean_kl": 1.0307099862440001,
+        "sd_kl": 0.07200311053391571,
+        "query_rmse": 0.005940423604143211,
+        "mean_excess_kl": 0.011451287504115814
+      },
+      {
+        "network": "alarm",
+        "n": 100,
+        "method": "random_order",
+        "mean_kl": 1.0478908482486917,
+        "sd_kl": 0.07380585865565396,
+        "query_rmse": 0.006559098551524504,
+        "mean_excess_kl": 0.028632149508807724
+      },
+      {
+        "network": "alarm",
+        "n": 1000,
+        "method": "empirical_bound",
+        "mean_kl": 0.1416074086323998,
+        "sd_kl": 0.008970359716110588,
+        "query_rmse": 0.0006974080568313158,
+        "mean_excess_kl": 0.001528482012389798
+      },
+      {
+        "network": "alarm",
+        "n": 1000,
+        "method": "holdout",
+        "mean_kl": 0.14068951680974387,
+        "sd_kl": 0.008967163952805614,
+        "query_rmse": 0.0007451684853602192,
+        "mean_excess_kl": 0.0006105901897338839
+      },
+      {
+        "network": "alarm",
+        "n": 1000,
+        "method": "induced",
+        "mean_kl": 0.2898939692389481,
+        "sd_kl": 0.008879580691872325,
+        "query_rmse": 0.0014147064569563193,
+        "mean_excess_kl": 0.14981504261893813
+      },
+      {
+        "network": "alarm",
+        "n": 1000,
+        "method": "minimum_dimension",
+        "mean_kl": 0.14007892662000998,
+        "sd_kl": 0.008673705214861473,
+        "query_rmse": 0.0007587904085437391,
+        "mean_excess_kl": 0.0
+      },
+      {
+        "network": "alarm",
+        "n": 1000,
+        "method": "oracle_kl",
+        "mean_kl": 0.14007892662000998,
+        "sd_kl": 0.008673705214861473,
+        "query_rmse": 0.0007587904085437391,
+        "mean_excess_kl": 0.0
+      },
+      {
+        "network": "alarm",
+        "n": 1000,
+        "method": "pilot_heuristic",
+        "mean_kl": 0.14845503339592286,
+        "sd_kl": 0.011459825054245728,
+        "query_rmse": 0.0013208110435892957,
+        "mean_excess_kl": 0.008376106775912894
+      },
+      {
+        "network": "alarm",
+        "n": 1000,
+        "method": "random_order",
+        "mean_kl": 0.15785668552094156,
+        "sd_kl": 0.012150911209655163,
+        "query_rmse": 0.0015152485848336616,
+        "mean_excess_kl": 0.017777758900931584
+      },
+      {
+        "network": "alarm",
+        "n": 5000,
+        "method": "empirical_bound",
+        "mean_kl": 0.03375200695990035,
+        "sd_kl": 0.0030065498173653233,
+        "query_rmse": 0.0005450208860495952,
+        "mean_excess_kl": 0.0005629365245241047
+      },
+      {
+        "network": "alarm",
+        "n": 5000,
+        "method": "holdout",
+        "mean_kl": 0.03436818117298266,
+        "sd_kl": 0.0036605105893110965,
+        "query_rmse": 0.0006132326773866499,
+        "mean_excess_kl": 0.0011791107376064147
+      },
+      {
+        "network": "alarm",
+        "n": 5000,
+        "method": "induced",
+        "mean_kl": 0.1892535455737529,
+        "sd_kl": 0.0028100950557968752,
+        "query_rmse": 0.0015419435434420236,
+        "mean_excess_kl": 0.15606447513837668
+      },
+      {
+        "network": "alarm",
+        "n": 5000,
+        "method": "minimum_dimension",
+        "mean_kl": 0.03318907043537624,
+        "sd_kl": 0.0029871985683315957,
+        "query_rmse": 0.0005514276954048654,
+        "mean_excess_kl": 0.0
+      },
+      {
+        "network": "alarm",
+        "n": 5000,
+        "method": "oracle_kl",
+        "mean_kl": 0.03318907043537624,
+        "sd_kl": 0.0029871985683315957,
+        "query_rmse": 0.0005514276954048654,
+        "mean_excess_kl": 0.0
+      },
+      {
+        "network": "alarm",
+        "n": 5000,
+        "method": "pilot_heuristic",
+        "mean_kl": 0.03619083780189225,
+        "sd_kl": 0.0033878128627131015,
+        "query_rmse": 0.0006497428152523328,
+        "mean_excess_kl": 0.003001767366516006
+      },
+      {
+        "network": "alarm",
+        "n": 5000,
+        "method": "random_order",
+        "mean_kl": 0.039606980103437016,
+        "sd_kl": 0.0034133427777696844,
+        "query_rmse": 0.0007486922116623716,
+        "mean_excess_kl": 0.006417909668060773
+      }
+    ],
+    "elapsed_seconds": 56.71051219999208
+  }
+}

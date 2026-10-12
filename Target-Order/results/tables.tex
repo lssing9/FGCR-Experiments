@@ -1,0 +1,44 @@
+\begin{table}[tbp]\centering
+\caption{New fixed-CPT benchmarks and randomized-order checks. All 100 full and restricted orders were distinct in each network.}\label{tab:new-structure}
+\begin{tabular}{lrrrrrr}
+\toprule
+Network & $p$ & $|E|$ & Graphs & $d_{\min}$ & $d_{\max}$ & Max. query error\\
+\midrule
+CHILD & 20 & 25 & 5 & 202 & 310 & 8.3e-17\\
+ALARM & 37 & 46 & 50 & 445 & 673 & 1.7e-16\\
+\bottomrule\end{tabular}\end{table}
+\begin{table}[tbp]\centering
+\caption{Descriptive constructor timing across 100 orders (milliseconds). Only FGCR is timed; there is no ROS speed claim.}\label{tab:new-time}
+\begin{tabular}{lrrr}
+\toprule
+Network & Median & Lower quartile & Upper quartile\\
+\midrule
+CHILD & 0.0298 & 0.0265 & 0.0340\\
+ALARM & 0.0600 & 0.0551 & 0.0622\\
+\bottomrule\end{tabular}\end{table}
+\begin{table}[tbp]\centering
+\caption{Selection at $n=5000$: mean joint KL and scalar-event RMSE over 20 paired repetitions. All methods use the same fitting observations.}\label{tab:new-selection}
+\begin{tabular}{lrrrr}
+\toprule
+Selector & CHILD KL & CHILD RMSE & ALARM KL & ALARM RMSE\\
+\midrule
+Holdout & 0.02061 & 0.0036977 & 0.03437 & 0.00061323\\
+Minimum dimension & 0.02061 & 0.0036977 & 0.03319 & 0.00055143\\
+Pilot heuristic & 0.02061 & 0.0036977 & 0.03619 & 0.00064974\\
+Random order & 0.02496 & 0.0036977 & 0.03961 & 0.00074869\\
+Empirical bound & 0.02061 & 0.0036977 & 0.03375 & 0.00054502\\
+Induced subgraph & 0.06502 & 0.0036977 & 0.18925 & 0.0015419\\
+\bottomrule\end{tabular}\end{table}
+\begin{table}[tbp]\centering
+\caption{Bound behavior at nominal 95\% per fixed graph. Medians pool distinct conditional graphs and 20 repetitions, not 100 independent graph samples.}\label{tab:new-bounds}
+\begin{tabular}{lrrrrr}
+\toprule
+Network & $n$ & Fits & Actual KL & Oracle & Empirical\\
+\midrule
+CHILD & 100 & 100 & 0.6485 & 38.28 & 44.78\\
+CHILD & 1000 & 100 & 0.1014 & 20.58 & 26.06\\
+CHILD & 5000 & 100 & 0.0226 & 11.39 & 14.31\\
+ALARM & 100 & 1000 & 1.0419 & 103.00 & 112.90\\
+ALARM & 1000 & 1000 & 0.1550 & 71.30 & 80.74\\
+ALARM & 5000 & 1000 & 0.0386 & 41.94 & 49.59\\
+\bottomrule\end{tabular}\end{table}

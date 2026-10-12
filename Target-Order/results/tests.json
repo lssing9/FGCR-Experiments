@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "variable_elimination_comparisons": 98,
+  "structural_cases": 33866,
+  "structural_edge_equalities": 67732,
+  "kl_decomposition_abs_difference": 1.0408340855860843e-17,
+  "robust_simplex_grid_check": "passed",
+  "empty_cell_check": "passed",
+  "bif_network_checks": "passed"
+}

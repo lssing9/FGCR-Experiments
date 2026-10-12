@@ -1,0 +1,3286 @@
+PAGE 1
+Minimal Directed Independence Maps for Conditional Models
+of Bayesian Networks via Target-Order Transformations
+ShanShan Li
+School of Mathematics and System Sciences
+Xinjiang University
+Urumqi 830017, China
+Yi Sun∗ brian@xjufe.edu.cn
+School of Statistics and Data Science
+Xinjiang University of Finance and Economics
+Urumqi 830012, China
+Abstract
+Conditioning can activate collider paths, so deleting conditioned vertices from a Bayesian
+network need not produce an independence map of the conditional model. We study
+Full-Graph Construct-and-Restrict (FGCR): a partition-preserving target order places
+conditioned vertices first, covered-arc transformations construct the full ordered minimal
+directed independence map, and restriction yields the corresponding conditional map. The
+conditional graph agrees with ROS under the same remaining-node order; the contribution
+is a construction and analysis framework, not a new graph object or uniform speed improve-
+ment. We give explicit partition-preserving correctness and restriction proofs, characterize
+minimal fill-in, and separate exact representation from finite-sample estimation. Beyond
+a uniform worst-cell bound, we derive a computable probability-weighted KL certificate
+using simultaneous confidence sets for parent-cell masses, and a held-out order-selection
+oracle inequality. New reproducible experiments use published CHILD and ALARM CPTs,
+100 randomized topological orders per network, and 20 paired repetitions. They verify
+structure and exact query agreement, show that simple dimension minimization can match
+or outperform pilot and validation selection, and quantify the substantial conservatism of
+the certificates. Data, saved samples, raw outputs, and executable code accompany the
+study.
+Keywords: Bayesian networks; conditioning; minimal directed independence map; target
+order; conditional inference
+1. Introduction
+1.1 Motivation and Problem Statement
+A Bayesian network (BN) uses a directed acyclic graph (DAG) to encode conditional
+independences and to factorize a joint distribution into local conditional distributions (Pearl,
+1988; Koller and Friedman, 2009; Neapolitan, 2004). This representation combines statistical
+interpretability with computational tractability and has become fundamental to causal
+∗. Corresponding author
+1
+
+PAGE 2
+Li and Sun
+inference, structure learning, machine learning, and expert systems (Pearl, 2009; Drton and
+Maathuis, 2017; Heinze-Deml et al., 2018; Yu et al., 2019; Vila-Francés et al., 2013).
+Many applications concern a selected subpopulation rather than the full population.
+Medical data may include only hospitalized or symptomatic patients, surveys may cover
+only respondents, and clinical decision systems routinely evaluate disease risks conditional
+on demographic characteristics and medical history. Such tasks involve the conditional
+distribution of the remaining variablesXR givenXC =xC, rather than the original joint
+distribution.
+Conditioning can change the dependence structure among the remaining variables. In
+the colliderX→Z←Y, for example, the path betweenX andY is blocked unlessZ or one
+of its descendants is conditioned on; once this occurs, the path becomes active and induces
+dependence (Pearl, 1988). Thus, the induced subgraphGR =G[R] obtained by deleting the
+conditioned nodes can assert independences that do not hold in the conditional model: in
+general,I(G)C⊆I(GR). Direct restriction is valid only under conditioning closure, namely
+whenI(G)C =I(GR) (Xie et al., 2025). Otherwise, one must construct a DAG onR that
+captures every required dependence without retaining redundant edges. We formulate this
+target as a minimal directed independence map (MDI map) of the conditional independence
+model relative to a prescribed node ordering.
+1.2 Target-Order Approach
+Xie et al. (2025) proposed Reverse Order Search (ROS), which starts from the original
+induced subgraph GR and progressively identifies the minimal fill-in edges required for
+conditioning within the ancestral region relative to the conditioning set (Xie et al., 2025).
+This paper addresses the same structural construction problem from the perspective of target
+order: rather than directly searching for fill-in edges onGR, we first encode the conditioning
+requirements into a target order on the full node set, and then obtain the conditional model
+structure via the ordered MDI map construction of the full DAG.
+The motivation for FGCR is algorithmic as well as conceptual. ROS is local: it identifies
+conditioning-related ancestral configurations and explicitly searches for the fill-in edges
+that they induce. FGCR instead reuses a general full-DAG transformation primitive
+(covering followed by covered-arc reversal) and represents conditioning by an order constraint.
+This allows an implementation to reuse order-transformation data structures, provides the
+invariant that the current graph is consistent with the current order, and makes the work
+easy to instrument at the level of swaps and parent-set updates. These advantages do not
+imply that FGCR is uniformly faster: ROS can be preferable when the conditioning-related
+ancestral region is very small, whereas FGCR is useful when an existing implementation
+already supports full-DAG order transformations. We do not infer a strict speed superiority
+criterion from implementation convenience.
+Specifically, given a topological orderβof the original DAGG, we setαC =β|C and
+αR = β|R, and construct the target orderα= (αC,αR), so that all conditioning nodes
+precede the remaining nodes, while preserving withinC and R their original relative order
+from β.
+On the full node set, following the transformation mechanism of Peña’s (2011) Method
+B2, we apply adjacent swaps together with the necessary covering and covered-arc reversals
+2
+
+PAGE 3
+MDI Maps of Conditioned Bayesian Networks
+to transformG into the MDI mapGαof the independence modelI(G) with respect to the
+target orderα. SinceC forms a root set inGα, the closure property of conditioning on a
+root set ensures thatGα[R] represents the conditional model. Thus, the construction of
+the MDI map of the conditional model reduces to a target-order transformation on the full
+DAG: first construct the ordered MDI mapGαof the full graph, and then take its induced
+subgraph on the remaining node setR.
+1.3 Scope of Novelty
+FGCR is an alternative construction and a unifying reduction, not a new conditional graph
+or a uniformly superior replacement for ROS. Once the remaining-node order is fixed, the
+two methods have identical output. Consequently, exact factorization, the KL decomposition,
+and the statistical bounds below apply equally to ROS when the same CPT estimator is
+used. The contribution is the partition-preserving full-graph construction, its correctness
+argument without the general Method B2 initialization, and the connection between ordered
+structure and statistical complexity. Order selection is available to either constructor; we do
+not claim that it is exclusive to FGCR.
+1.4 What Is and Is Not Established
+The restriction theorem and partition-specific initialization are structural results. The new
+empirical-weight certificate and held-out oracle inequality make statistical order comparison
+explicit, but are constructor-independent once candidate graphs are available. No theorem
+establishes that ROS cannot perform the same selection, or that FGCR is always faster
+on a graph class. Those would be different claims requiring separate proofs and controlled
+implementations.
+1.5 Contributions, Scope, and Organization
+This paper organizes its contributions into four parts.
+First, we propose a reduction from the MDI map of the conditional model to a target-
+order MDI map construction on the full graph. Given the original DAGG, the conditioning
+set C, and the remaining setR = V\C, we transform the problem of constructing the
+conditional model structure on the remaining nodes into that of constructing an MDI map
+with respect to a target order on the full node set, and establish the correspondence between
+the full-graph target structure and the conditional model target structure.
+Second, we present a Full-Graph Construct-and-Restrict (FGCR) algorithm. Given a
+topological orderβof the original graph, we construct a partition-preserving target order
+α= (β|C,β|R), and directly useβas the initial node order to perform adjacent node
+swaps, edge covering, and covered-arc reversals to complete the full-graph transformation.
+Theoretically, we prove that during the execution, the relative order of nodes within each
+of C and R remains invariant, all actual swaps occur between the two node sets, and the
+current graph is always consistent with the current node order. Furthermore, we prove
+finite termination by showing that each adjacent swap strictly decreases the inversion count
+relative toα, and use an active-route induction to establish that the terminal graph coincides
+with the unique MDI mapGαof G with respect to the target orderα. On this basis, taking
+3
+
+PAGE 4
+Li and Sun
+HR =Gα[R], we obtain the MDI map of the conditional independence modelI(G)C with
+respect to the remaining-node orderαR.
+Third, we characterize the structural relationship between the FGCR conditional graph,
+the original induced subgraph, and the ROS construction. We prove that the FGCR output
+can be uniquely expressed asHR = GR + ∆ αR
+G,C, where ∆ αR
+G,C = E(HR)\E(GR) is the
+minimal fill-in edge set under the target orderαR. Furthermore, using the uniqueness of
+the MDI map for a given node order, we prove that FGCR and ROS produce the same
+conditional graph given the same original graph, conditioning set, and remaining-node
+order, thereby establishing the structural correspondence between the full-graph target-order
+transformation and the local fill-in search approach.
+Fourth, we establish the probabilistic representation and finite-sample theory for the
+conditional graph. We prove that the true conditional distributionPC admits an exact
+factorization according toHR, so the FGCR conditional graph introduces no structural
+misspecification error. We further use the KL decomposition to characterize the structural
+error incurred by omitting conditional dependencies from the original induced subgraph, and
+provide high-probability bounds on the overall KL divergence, total variation distance, and
+probability query error in terms of the effective sample sizes of parent configurations. On
+this basis, we show that although different remaining-node orders all preserve the correctness
+of the conditional model representation, they affect the finite-sample statistical complexity
+through the parent structure, parameter dimensionality, and parent-configuration probability
+masses, thereby influencing the efficiency of parameter estimation.
+We additionally convert the probability-weighted analysis into a fully empirical confi-
+dence certificate and give a finite-candidate validation guarantee for order selection. The
+experimental contribution in this revision is a new, released two-network study, not a claimed
+reproduction of unavailable historical results.
+The remainder of the paper is organized as follows. Section efsec:preliminaries presents
+background and related work. Section efsec:problem-formulation defines the conditional
+model and the target-order reduction. Section efsec:target-order-transformation presents
+FGCR, its example, and complexity analysis. Section efsec:theoretical-analysis proves
+correctness and develops the structural properties. Section efsec:probabilistic-theory con-
+tains exact factorization and finite-sample theory. Section efsec:experiments reports the
+reproducible experiments. Section efsec:discussion discusses scope and limitations, and
+Section efsec:conclusion concludes. Proofs and implementation checks are provided in
+Appendices A–D.
+2. Background and Related Work
+2.1 Graphical and Probabilistic Background
+This section fixes notation and reviews the graphical, probabilistic, and independence-model
+concepts used throughout the paper. Related work is placed in a separate final subsection
+so that definitions are not interrupted by historical comparisons.
+4
+
+PAGE 5
+MDI Maps of Conditioned Bayesian Networks
+Table 1:Notation and scope. Counts of nodes and observations are distinguished explicitly.
+Symbol Meaning
+p =|V|, R=V\C Number of graph nodes; unconditioned nodes
+β,α= (β|C,β|R) Initial topological order; target order
+H =Gα, HR =H[R] Full ordered MDI map; conditional graph
+n,Dn Number of conditional observations; training sample
+Nv,a Sample count for parent configurationa at nodev
+rv,qv Child-state count; number of parent configurations
+d(HR),QH,LH Parameter dimension; parent cells; child/parent cells
+πv,a,θv,a Parent-cell mass; smallest true CPT entry in that cell
+S,K, ∆ H Swaps; reversals; largest intermediate in-degree
+2.1.1 Basic Graph-Theoretic Concepts
+Let G = (V,E ) be a directed graph defined on a finite node setV, whereE⊆V×V is the
+set of directed edges. If(u,v )∈E, we writeu→v, and callu a parent ofv and v a child of
+u. If the graph contains no directed cycle, thenG is called a directed acyclic graph (DAG).
+For any nodev∈V, its parent set, child set, ancestor set, descendant set, and non-
+descendant set are respectively defined as
+paG(v) ={u∈V\{v}:u→v∈E},
+chG(v) ={u∈V\{v}:v→u∈E},
+anG(v) ={u∈V\{v}: there exists a directed path fromu to v in G},
+deG(v) ={u∈V\{v}: there exists a directed path fromv to u in G},
+ndG(v) ={u∈V\(deG(v)∪{v})}.
+We further defineAnG(v) = anG(v)∪{v}.
+For a node setA⊆V, define
+anG(A) =
+( ⋃
+v∈A
+anG(v)
+)
+\A, AnG(A) = anG(A)∪A.
+A nodev is called a root node ifpaG(v) = ∅. A node setA⊆V is called a root set in
+G if paG(A) = (⋃
+v∈A paG(v))\A = ∅.Note that this does not require everya∈A to have
+no parents; it only requires that no node inA has a parent outsideA, while directed edges
+may still exist among nodes withinA.
+For anyA⊆V, letGA = (A,EA) denote the subgraph ofG induced by the node setA,
+where EA =E∩(A×A). Every DAG admits a topological order. Letα= (v1,v 2,...,v|V|)
+be a total order onV. If, for every directed edgeu→v∈E, nodeu precedes nodev in α,
+then αis called a topological order ofG, and we writeu≺αv.
+Let luv = (u =v0,v 1,...,vk =v), u,v ∈V, be a sequence of distinct nodes such that
+every pair of consecutive nodesvi−1 and vi is adjacent inG. Then luv is called a path
+connecting u and v. The edges along a path need not have the same orientation.
+5
+
+PAGE 6
+Li and Sun
+For an internal nodevi on the path (1≤i≤k−1), if the two adjacent edges are
+oriented asvi−1→vi←vi+1, thenvi is called a collider on the path; otherwise, it is called
+a non-collider.
+Given a node setS⊆V, a pathluv is said to be active givenS if every non-collider on the
+path is not contained inS and every collider on the path belongs toAnG(S). Equivalently,
+u and v are said to bed-connected givenS through this path.
+Let A,B,S ⊆V be pairwise disjoint. If every path inG connecting anya∈A and
+anyb∈B is blocked byS, thenA and B are said to bed-separated givenS, denoted by
+A⊥dB|S [G].If there exists at least one path that is active givenS, we writeA̸⊥dB|S [G].
+Theinternalnodesonapathcanbeclassifiedintothreetypesaccordingtotheorientations
+of their two incident edges: chain, fork, and collider structures. The corresponding node
+sets are defined as follows:
+Vs(luv) ={w∈V,u→w→v⊆luv or u←w←v⊆luv},
+Vd(luv) ={w∈V,u←w→v⊆luv},
+Vc(luv) ={w∈V,u→w←v⊆luv}.
+2.1.2 Bayesian Networks and Probabilistic F actorization
+A Bayesian networkB = (G,P(G)) consists of a DAGG and a family of distributionsP(G)
+that is compatible withG. LetXV = (Xv :v∈V ) be the random vector indexed by the
+node setV, and letP be a probability distribution onXV. IfP factorizes according to the
+DAGG as P (xV ) = ∏
+v∈V P
+(
+xv|xpaG(v)
+)
+, then P is said to be compatible withG. The
+familyP(G) =
+{
+P :P (xV ) = ∏
+v∈V P
+(
+xv|xpaG(v)
+)}
+consists of all probability distributions
+that factorize according toG.
+The above factorization shows that the global joint distribution can be represented by
+a collection of local conditional distributions. The local distribution of each variableXv
+depends directly only on the random variablesXpaG(v) corresponding to its parents. Such a
+local factorization can substantially reduce the number of parameters required to describe
+the joint distribution and provides a computational basis for parameter estimation and
+probabilistic inference.
+By the local Markov property of a DAG, for anyv∈V, we haveXv⊥XndG(v)\paG(v)|
+XpaG(v), that is, given its parents, the current node is conditionally independent of its
+non-descendants that are not its parents, wherendG(v) denotes the set of non-descendants
+ofv. More generally, the global Markov property of DAGs states (Pearl, 1988; Lauritzen,
+1996; Koller and Friedman, 2009) that ifA ⊥d B |S [G], then for every P ∈ P(G),
+XA⊥XB|XS [P ].
+2.1.3 Independence Models and Minimal I-maps
+For a probability distributionP, define its conditional independence model as
+I(P ) ={⟨A,B|S⟩:XA⊥XB|XS [P ], A,B,S ⊆V are pairwise disjoint}.
+Here, the triplet⟨A,B|S⟩indicates that the random vectorsXA and XB are conditionally
+independent givenXS.
+6
+
+PAGE 7
+MDI Maps of Conditioned Bayesian Networks
+Similarly, the independence model induced by a DAGG is defined as
+I(G) ={⟨A,B|S⟩:A⊥dB|S [G], A,B,S ⊆V are pairwise disjoint}.
+For a family of probability distributionsP, define its common independence model as
+I(P) = ⋂
+P∈PI(P ), which contains the conditional independence relations that hold for
+every member of the familyP.
+Definition 1 (Independence Map)LetG be a DAG defined on the node setV, and letP
+be a family of probability distributions onXV. IfI(G)⊆I(P), equivalently, ifI(G)⊆I(P )
+for everyP∈P, thenG is called an independence map (I-map) ofP.
+WhenP ={P}contains only a single probability distribution, the above condition
+reduces toI(G)⊆I(P ). Thus, the basic requirement of an I-map is that the graph must
+not encode conditional independence relations that do not hold in the distribution. The
+graph may fail to represent some valid independence relations, but it must not incorrectly
+assert throughd-separation an independence relation that does not actually hold.
+Definition 2 (Minimal Independence Map)Let a DAGG = (V,E ) be an I-map of the
+distribution familyP. If for every edgee∈E, the graphG−e is no longer an I-map ofP,
+that is,I(G−e) ⊈I(P), thenG is called a minimal independence map (minimal I-map) of
+P (Pearl, 1988).
+Thus, for a minimal I-map, deleting any edge produces at least oned-separation relation
+that is not supported by the distribution model.
+It is important to distinguish “minimal” from “minimum.” The minimality of a minimal
+I-map is edgewise: no single edge can be deleted, but this does not guarantee that the graph
+has the globally minimum number of edges among all possible DAGs. Different node orders
+may correspond to different minimal I-maps. These graphs all satisfy edgewise minimality,
+but may differ in the number of edges and their parent-set structures. Since this paper
+consistently uses DAGs as graphical representations of independence models, a minimal
+I-map represented by a DAG will also be referred to as a minimal directed independence
+map (MDI map). For a given node order, we further consider an MDI map that is consistent
+with that order, as defined in the following sections.
+2.1.4 Graphoid Axioms of Conditional Independence
+Conditional independence relations satisfy a collection of basic algebraic properties that
+form the foundation of Graphoid theory (Dawid, 1979; Pearl and Paz, 1987; Pearl, 1988), an
+axiomatic system for describing conditional independence relations.
+The independence modelI(G) defined byd-separation in a DAG is a standard example
+of a Graphoid. LetA,B,C,D be pairwise disjoint subsets of nodes, and writeI(A,B|C)
+to mean that “XA and XB are conditionally independent givenXC” (where the comma
+represents set union, as inB∪D). A Graphoid satisfies the following five core axioms:
+Symmetry
+I(A,B|C) =⇒I(B,A|C)
+7
+
+PAGE 8
+Li and Sun
+Decomposition
+I(A,B∪D|C) =⇒I(A,D|C)
+Weak Union
+I(A,B∪D|C) =⇒I(A,B|C∪D)
+Contraction
+I(A,B|C∪D) and I(A,D|C) =⇒I(A,B∪D|C)
+Intersection
+I(A,B|C∪D) and I(A,C |B∪D) =⇒I(A,B∪C|D)
+For arbitrary probability distributions, strict positivity is a sufficient condition for
+intersection; it is not an assumption needed for the graphical arguments in this paper. The
+d-separation modelI(G) satisfies intersection directly. Indeed, supposeA⊥dB|D∪C and
+A⊥dC|D∪B, but an active path givenD connectsA toB∪C. Stop that path at its first
+vertex inB∪C. Its internal vertices avoid both sets, and every collider has a descendant
+in D. If the endpoint lies inB, the prefix is still active givenD∪C; if it lies inC, it is
+still active givenD∪B. Either case contradicts a premise. Thus intersection holds. The
+other graphoid axioms hold ford-separation as well. Conditioning an independence model
+on a fixed set simply adds that set to each conditioning argument, soI(G)C inherits these
+axioms. In particular, all uses of intersection in the structural proofs below are graphical
+and do not presuppose a strictly positive fitted distribution.
+2.2 Ordered MDI Maps
+A key issue in Peña’s work on consensus DAG construction is how to obtain the corresponding
+MDI map under a given node order. Letαbe a total order on the node setV. If a DAG
+H is an MDI map of an independence modelM, and every directed edgeu→v∈E(H)
+satisfiesu≺αv, thenH is said to be consistent with the node orderα.
+Definition 3 (MDI Map Relative to a Given Node Order)LetM be an indepen-
+dence model defined on the node setV, and letαbe a total order onV. If a DAGH is an
+MDI map ofM and is consistent with the node orderα, thenH is called the MDI map of
+M relative to the node orderα.
+When the independence modelM is a graphoid, for every given node orderα, there
+exists a unique MDI map consistent withα(Pearl, 1988; Peña, 2011). In particular, when
+M =I(G), we denote byGαthe MDI map ofI(G) with respect to the target orderα. For
+a given DAGG and target orderα, Peña proposed a DAG transformation method for a
+prescribed target order, whose basic operations include adjacent node swaps, arc covering,
+and covered-arc reversal. The corrected Method B2 first determines an initial node order
+from the original DAG and the target order, and then processes nodes from right to left
+according to the target order, progressively obtaining the MDI map under the target order
+through local graph transformations. The full-graph construction in this paper adopts
+the above covering and covered-arc reversal mechanisms, while the target order is induced
+8
+
+PAGE 9
+MDI Maps of Conditioned Bayesian Networks
+directly by partitioning a topological order of the original DAG into the conditioning set
+and the remaining-node set.
+We next introduce the covered-arc and covered-arc reversal operations required for
+target-order MDI-map transformations.
+2.3 Covered Arcs and Arc Reversal
+The MDI map under a given node order can be obtained through local edge augmentation
+and covered-arc reversals of a DAG. Peña’s (2011) Method B2 is based on these two
+types of operations and progressively adjusts the current DAG to make it consistent with
+the prescribed target order. This section briefly reviews the covered-arc, covering, and
+covered-arc reversal properties required later.
+Definition 4 (Covered Arc)LetG = (V,E ) be a DAG, and letx→y∈E. If paG(y) =
+paG(x)∪{x}, thenx→y is called a covered arc inG (Chickering, 1995).
+The covering condition is equivalent topaG(x) = paG(y)\{x}, that is, except forx itself,
+x and y have the same parent set.
+If x→y is not yet covered, it can be made covered by adding appropriate parent-
+completion edges. LetPx = paG(x),Py = paG(y)\{x}. The corresponding parent-completion
+edges can be written as
+AG(x,y ) =
+{
+z→y :z∈Px\Py
+}
+∪
+{
+z→x :z∈Py\Px
+}
+.
+Definition 5 (Arc Covering)Letx→y be a directed edge in a DAGG. The process of
+adding appropriate parent-completion edges so that the updated graph˜G satisfies pa ˜G(y) =
+pa ˜G(x)∪{x}is called covering the arcx→y. The covering operation is called valid if the
+resulting graph remains a DAG.
+Arc covering makes the arc to be reversed satisfy the covering condition through edge
+augmentation. Since adding edges to a DAG may reduce the conditional independence
+relations encoded by the graph, if˜G is obtained fromG through a valid covering operation,
+then I( ˜G)⊆I(G).
+Covered arcs satisfy the following basic property.
+Lemma 6 (Covered-Arc Reversal)Letx→y be a covered arc in a DAGG, and letG′
+be obtained by reversing it toy→x. ThenG′is still a DAG andI(G′) =I(G) (Chickering,
+1995; Peña, 2011).
+Thus, covering and covered-arc reversal play different roles: the former adjusts the parent
+structure through necessary edge augmentation, whereas the latter changes the orientation
+of a covered arc while preserving the independence model. If˜G is obtained fromG through
+a valid covering operation andG′is subsequently obtained by reversing a covered arc in˜G,
+then I(G′) =I( ˜G)⊆I(G).
+The above operations constitute the basic computational steps of Peña’s (2011) Method
+B2. By repeatedly performing the required covering and covered-arc reversal operations,
+the method transforms an input DAG into an MDI map consistent with the prescribed
+target order. Section 4 uses this existing graph-transformation mechanism in the full-graph
+construction stage of FGCR.
+9
+
+PAGE 10
+Li and Sun
+2.4 Conditioning, Collapsibility, and ROS
+The structural representation of Bayesian networks after conditioning has been studied
+extensively. Since marginalization and conditioning may make the class of DAGs no longer
+closed under structural representation, one line of research uses undirected graphs or more
+general mixed graphs to represent the conditional independence structures induced by
+these operations. Relevant representations include undirected and moral graphs (Lauritzen,
+1996), summary graphs (Cox and Wermuth, 1996), MC graphs (Koster, 2002), ancestral
+graphs (Richardson and Spirtes, 2002), and chain mixed graphs for representing structures
+after marginalization and conditioning (Sadeghi, 2016). These graphical models provide
+considerable flexibility in structural representation, but they generally involve undirected
+edges, bidirected edges, or multiple edge types, and their probabilistic parameterizations
+and local conditional factorizations are less direct than those of DAGs. Therefore, when
+the objective is not only to describe conditional independence relations but also to perform
+parameter estimation and conditional probabilistic inference, continuing to use a DAG
+representation offers practical advantages.
+Within the DAG framework, Xie et al. (Xie et al., 2025) systematically studied con-
+ditioning in Bayesian networks. Given an original DAGG = (V,E ), a conditioning set
+C⊂V, and the remaining-node setR = V\C, they analyzed conditions under which
+the original induced subgraphGR = G[R] continues to represent the conditional model.
+When conditioning closure does not hold, appropriate directed edges must be added toGR
+to construct a DAG MDI map of the conditional model. To this end, Xie et al. defined
+a minimal fill-in edge set and, under faithfulness, established a correspondence between
+minimal fill-in edge sets and MDI maps of the conditional distribution model.
+On this basis, Xie et al. proposed the Reverse Order Search (ROS) algorithm for
+constructing minimal fill-in edge sets. ROS processes local structures within the ancestral
+region associated with the conditioning set in the reverse order of a given topological
+order and progressively adds the required fill-in edges. If the relevant region containsk
+nodes and the maximum parent-set size ism, the upper bound on its time complexity
+is O
+(
+m2 max{k−2, 0}
+)
+, so ROS can achieve relatively low computational complexity for
+sparse DAGs with small local parent sets.
+The above approach starts from the original induced subgraphGR and constructs the
+conditional model by explicitly searching for fill-in edges required by conditioning. This
+paper studies the same structural construction problem from the perspective of target-order
+transformation. The conditioning requirement is converted into a node-order constraint on
+the full DAG, and the conditional-model structure is obtained using the construction of an
+MDI map under a given node order. We later prove a strict correspondence between this
+construction and the minimal fill-in representation, and further analyze its relationship with
+the output of ROS.
+3. Problem Formulation
+We seek a DAG onR =V\C whose graphical independences are valid after conditioning.
+Minimality is always relative to a specified remaining-node order. The argument below
+distinguishes the graphical conditional independence model, its probabilistic soundness, and
+any additional assumptions needed for family-level minimality.
+10
+
+PAGE 11
+MDI Maps of Conditioned Bayesian Networks
+3.1 Conditional Distribution and Conditional Independence
+All graphical statements below concern the conditioning set itself; probabilistic statements
+also specify an event of positive probability.
+LetB = (G,P(G)) be a Bayesian network defined on the random vectorXV, where
+G = (V,E ) is a DAG andP(G) is the family of all probability distributions that factorize
+according toG. Given a conditioning setC⊂V, define the remaining-node set asR =V\C.
+Definition 7 (Conditional Distribution Model)LetB = (G,P(G)) be a Bayesian net-
+work onV, letC⊂V, and letR =V\C. For a fixed valuexC, the conditional distribution
+model induced byG under the eventXC =xC is
+P(G)C ={P (XR|XC =xC) :P∈P(G), P(XC =xC)> 0}.
+For notational simplicity, the dependence on the fixed valuexC is suppressed.
+For any pairwise disjoint node setsA,B ⊆R, we use the shorthandPC(XA|XB)≡
+P (XA|XB,XC =xC).
+Definition 8 (Conditional Independence Model)Given a DAG G = (V,E ) and a
+conditioning setC⊂V, letR =V\C. The conditional independence model ofG given C
+is defined as
+I(G)C ={⟨A,B|S⟩:A⊥dB|S∪C [G], A,B,S ⊆R are pairwise disjoint}.
+If⟨A,B|S⟩∈I(G)C, thenA and B are d-separated byS∪C in the original DAGG.
+Correspondingly, in the conditional distribution induced byG, the conditional independence
+relation XA⊥XB|XS is guaranteed by the graph structure.
+A distribution is faithful toG if I(P ) = I(G). This is a statement about ordinary
+conditional independence, not a guarantee that every fixed contextXC = xC has no
+additional context-specific independences. We therefore distinguish graphical minimality
+from minimality for an individual conditional distribution.
+Proposition 9 (Soundness and a Sufficient Condition for Family Minimality)
+For any discrete distributionP factorizing over G, and any xC of positive probability,
+I(G)C⊆I(P (·|xC)). If, in addition, the conditional family at this fixed context contains a
+memberP∗C with I(P∗C) =I(G)C, every graphical non-independence has a witness in that
+family. We call this additional condition theconditional-faithfulness witness condition.
+Proof The global Markov property givesXA⊥XB|XS∪C wheneverA⊥dB|S∪C[G].
+Restricting this equality to the positive probability contextXC =xC gives independence of
+XA and XB givenXS in PC, with conditional equalities understood on their support. The
+second assertion follows from the defining equality forP∗C: any independence absent from
+I(G)C fails in that member.
+Only the first assertion is needed for exact factorization and statistical analysis. We
+do not infer the witness condition from ordinary faithfulness of one joint distribution.
+Where family-level minimality is discussed, this condition is stated explicitly. An individual
+parameterization may have extra independences and admit a smaller DAG.
+11
+
+PAGE 12
+Li and Sun
+3.2 Why the Induced Subgraph Fails
+Given a conditioning setC⊂V, letR =V\C, and letGR =G[R] denote the subgraph of
+the original graph induced by the remaining-node set. SinceGR retains all directed edges
+of the original graph whose endpoints both belong toR, it is the most direct candidate
+structure for the conditional model.
+However, in general,I(G)C ⊆I(GR), and the inclusion may be strict. This occurs
+because conditioning may activate paths containing colliders. For example, for the structure
+x→w←y, ifw∈AnG(C), then conditioning onC may activate this path and induce
+dependence betweenx and y in the conditional model, whereas the induced subgraphGR
+obtained by removing the conditioning nodes does not automatically represent this change.
+Therefore, whenI(G)C ⊊I(GR), the graphGR encodes conditional independence relations
+that do not hold in the conditional model.
+Xie, Guo, and Sun systematically studied closure of Bayesian networks under conditioning
+in Section 4, “Closure of Bayesian Network under Conditioning.” IfI(G)C =I(GR), then
+the graphical independence model is closed under conditioning. This is an equality of
+independence models, not by itself an assertion that two arbitrary parameterized distribution
+families are equal.
+An important special case is a root set: if no arc entersC from R, thenI(G)C =I(GR),
+as proved in Lemma 12. For unrestricted discrete CPTs, equality of the corresponding
+conditional distribution families also follows: conditioning fixes theC arguments in the
+CPTs onR; conversely, any CPTs onGR can be extended toG by ignoring theC arguments
+and choosing independent positive CPTs onC.
+This property provides the basis for the reduction used in this paper. For a general
+conditioning setC, the original graphG need not be closed under conditioning onC. If
+G can be transformed into an appropriate DAGH in whichC forms a root set, then the
+conditional model can be represented byH[R]. The next subsection realizes this construction
+through a target node order.
+3.3 Ordered MDI Map and Target-Order Reduction
+LetB = (G,P(G)) be a Bayesian network, whereG = (V,E ) is a DAG. Given a conditioning
+setC⊂V, letR =V\C. This paper focuses on constructing an MDI map of the conditional
+independence modelI(G)C on the remaining-node setR. Specifically, given a node order
+αR on R, the goal is to construct a DAGHR that is consistent withαR and is the MDI
+map ofI(G)C with respect toαR. Under the conditional-faithfulness witness condition,
+Proposition 9 implies that this structure can also serve as a minimal directed representation
+of the conditional distribution modelP(G)C.
+Section 3.2 shows that, for a general conditioning set, the original induced subgraph
+GR =G[R] need not represent all dependencies induced by conditioning. However, when the
+conditioning set forms a root set in the DAG, conditioning is closed. This observation suggests
+first changing the directed representation on the full node setV so that the conditioning set
+becomes a root set, and then obtaining the conditional-model structure by restricting the
+resulting graph toR.
+The key to the full-graph reduction is the choice of the target order. Given a topological
+order βof G, we preserve the relative order of nodes within the conditioning setC and
+12
+
+PAGE 13
+MDI Maps of Conditioned Bayesian Networks
+within the remaining-node setR, and move all conditioning nodes before all remaining
+nodes, obtainingα= (β|C,β|R). This construction preserves the order information of the
+original topological order within each of the two node sets, while encoding the conditioning
+requirement as an ordering constraint between the two sets, thereby providing the basis for
+the subsequent full-graph transformation and restriction.
+Let β= (v1,v 2,...,v|V|) be a topological order of the original DAGG. Preserving the
+relative order of nodes inC and R as they appear inβ, defineαC =β|C, αR =β|R, and
+construct the target orderα= (αC,αR). Thus, for anyc∈C and r∈R, we havec≺αr.
+Moreover,αR remains a topological order of the original induced subgraphGR.
+Let H =Gαdenote the MDI map of the independence modelI(G) with respect to the
+target orderα. SinceH is consistent withα, every directed edge entering a conditioning
+node must originate withinC, and henceC forms a root set inH. By closure under root-set
+conditioning,I(H)C =I(HR), so the target-order transformation on the full graph provides
+a natural intermediate representation for constructing the conditional-model structure.
+We further establish the reductionHR = (Gα)[R], whereHR is the MDI map ofI(G)C
+with respect toαR.
+Thus, the target-order MDI-map construction of the conditional model on the remaining-
+node set can be carried out by first constructingGαon the full node setV and then
+restricting it toR. Consequently, the structural construction problem originally defined on
+the conditional independence modelI(G)C is reduced to constructing the MDI map of the
+full DAGG with respect to a prescribed target order.
+The next section presents the computational implementation of this full-graph target-
+order transformation; Section 5 further proves the correctness of the reduction, including
+the I-map property and edgewise minimality ofHR with respect toI(G)C.
+4. Target-Order Reduction and FGCR
+Section 3 reduces the structural construction problem of the conditional model to constructing
+a target-order MDI map on the full node set. This section presents a concrete algorithmic
+implementation of this reduction. The basic idea is as follows: starting from a topological
+order of the original DAG, we first construct the target orderα= (αC,αR), in which all
+conditioning nodes precede all remaining nodes. We then progressively transform the original
+DAGG into the MDI mapGαwith respect to the target orderαthrough adjacent node
+swaps, arc covering, and covered-arc reversals, and finally take the induced subgraph on the
+remaining-node set.
+4.1 Partition-Preserving Target Order
+Let the original DAG beG = (V,E ), the conditioning set beC⊂V, and the remaining-node
+set beR =V\C. We first construct a node order that is compatible with the conditioning
+requirement and then perform the graph transformation on the full node setV.
+Let β= (v1,v 2,...,vn) be a topological order of the original DAGG. Preserving the
+relative order of the nodes inC and R as they appear inβ, defineαC =β|C, αR =β|R,
+and construct the target orderα= (αC,αR).
+Thus,αhas two basic properties. First, for anyc∈C and r∈R, we havec≺αr, so all
+conditioning nodes precede all remaining nodes. Second, becauseβis a topological order of
+13
+
+PAGE 14
+Li and Sun
+Algorithm 1:Construction of the Conditional Target Order
+Input: DAGG = (V,E ), conditioning setC, R =V\C, and a valid topological
+order βof G
+Output: Initial topological orderβand target orderα= (αC,αR).
+1 Let αC be the sequence of nodes inC as they appear inβ, preserving their original
+relative order;
+2 Let αR be the sequence of nodes inR as they appear inβ, preserving their original
+relative order;
+3 Let α= (αC,αR); return βand α
+G and αR preserves the relative order of the nodes inR from β, αR is also a topological
+order of the original induced subgraphGR =G[R].
+The above procedure can be formalized as Algorithm 1.
+Algorithm 1 converts the conditioning requirement into an explicit node-order constraint.
+The next step is to adjust the original DAG on the full node setV so that it eventually
+becomes consistent with the target orderα.
+4.2 Full-Graph Transformation
+Given the original topological orderβand the target orderα= (αC,αR) obtained from
+Algorithm 1, the algorithm directly usesβas the initial node order and progressively
+transforms the current order intoαby swapping adjacent inverted pairs. Whenever a swap
+requires changing the direction of a directed arc in the current DAG, the algorithm first
+covers the arc and then performs a covered-arc reversal, thereby ensuring that the graph
+remains a DAG throughout the transformation.
+Let the initial working order and graph beβ0 =β, G0 =G, respectively. The algorithm
+processes nodes from right to left according to the target orderα. LetY be the node currently
+being processed, and letZ be the right neighbor ofY in the current working orderβj. IfZ
+lies to the left ofY in the target orderα, that is, ifZ≺αY, then the relative positions of
+Y and Z in the current order disagree with the target order, and the two nodes must be
+swapped.
+Since the current graphGi is consistent with the current working orderβj, if a directed
+arc exists betweenY and Z, its direction can only beY →Z. AfterY and Z are swapped,
+the corresponding direction should becomeZ→Y. However, an arbitrary arc reversal may
+introduce directed cycles or alter the independence relations encoded by the graph, so the
+reversal cannot be performed directly.
+Let PY = paGi(Y ),PZ = paGi(Z)\{Y}. To make Y →Z a covered arc, we need
+PY =PZ. Therefore, the parent-completion arcs that must be added areAGi(Y,Z ) ={X→
+Z :X∈PY\PZ}∪{X→Y :X∈PZ\PY}. After these parent-completion arcs are added,
+pa(Z) = pa(Y )∪{Y}, soY →Z becomes a covered arc and can be reversed toZ→Y.
+The positions ofY and Z are then swapped in the current working order, yielding the next
+order βj+1.
+If Y →Z does not exist in the current graph, no graph modification is required; only
+the positions of the two adjacent nodes in the working order are swapped.
+14
+
+PAGE 15
+MDI Maps of Conditioned Bayesian Networks
+Algorithm 2:Target-Order Transformation via Covered-Arc Reversals
+Input: DAGG = (V,E ), conditioning setC, topological orderβ, and
+α= (β|C,β|V\C)
+Output: The MDI mapHR of the conditional independence modelI(G)C with
+respect toαR.
+1 Set R =V\C, current graphG, β0 =β, j = 0, and mark all nodes unconsidered;
+2 while βj̸=αdo
+3 Let Y be the rightmost node inαthat has not yet been considered;
+4 Let Z be the right neighbor ofY in βj, or∅if none;
+5 while Z̸=∅and Z lies to the left ofY in αdo
+6 assert: Z is the immediate right neighbor ofY and the current graph
+contains no edgeZ→Y;
+7 if the current graph contains an edgeY→Z then
+8 Set PY = pa(Y ), PZ = pa(Z)\{Y}in the current graph;
+9 AddX→Z for eachX∈PY\PZ;
+10 AddX→Y for eachX∈PZ\PY;
+11 Replace Y→Z byZ→Y;
+12 Swap the positions ofY and Z in βj to obtainβj+1;
+13 j←j + 1;
+14 Let Z be the right neighbor ofY in βj;
+15 Mark Y as considered;
+16 Let H be the current graph;
+17 Take the subgraphHR of H induced byR;
+18 return HR
+The above process is repeated until the position ofY in the current working order agrees
+with the target order, after which the algorithm proceeds to the next node in the target
+order that has not yet been fixed. The entire order-adjustment process can be written as
+β0 =β−→β1−→···−→βm =α.
+The detailed procedure is given in Algorithm 2.
+4.3 Complexity Analysis
+Let p =|V|, e =|E|, letS denote the number of adjacent swaps required to transform
+the initial orderβinto the target orderα, letK denote the number of swaps that trigger
+covered-arc reversals, and let∆ H denote the maximum in-degree over all intermediate DAGs
+generated during the execution. Assume expected constant-time hash-set membership and
+insertion; adjacency sets are used to store parent sets and that a position map is maintained
+for the nodes in the current order.
+Theorem 10 (Time Complexity)If the initial topological orderβmust be computed from
+G, then the overall time complexity of Algorithm 1, Algorithm 2, and the final construction
+HR =H[R] is O(p +e +S +K∆ H).
+15
+
+PAGE 16
+Li and Sun
+Table 2: Construction costs: upper bounds are not speed lower bounds.
+Constructor Reported operation bound Relevant quantities
+FGCR O(p +e +S +K∆ H) Full graph and intermediate parents
+ROS O(m2 max{k−2, 0}) Affected region and local parents
+Proof Algorithm 1 scansβonce to constructαC = β|C, αR = β|R, α = (αC,αR),
+which requiresO(p) time.
+Algorithm 2 performs a total ofS adjacent node swaps. With the position map, each
+position query and swap can be completed inO(1) time, so the total complexity of order
+adjustment isO(S). For each covered-arc reversal, the parent sets of the two relevant nodes
+must be compared and completed. Since the maximum in-degree of any intermediate graph
+is ∆ H, one such operation requires at mostO(∆ H) time. Hence the total complexity ofK
+covered-arc reversals and parent-set completions isO(K∆ H).
+After Algorithm 2 obtains the full graphH = Gα, constructingHR = H[R] requires
+only scanning the nodes and directed edges ofH and retaining those edges whose endpoints
+both belong toR, which takesO(p +|E(H)|) time. Since at most O(K∆ H) edges are
+added during the covering operations,|E(H)|=O(e +K∆ H), and hence constructingHR
+takesO(p +e +K∆ H) time, which does not increase the asymptotic order of the overall
+complexity.
+Therefore, the total time complexity of the complete FGCR procedure is
+O(p +e +S +K∆ H).
+By the cross-partition swap property, every actual swap occurs between one node
+in R and one node inC, and each pair of nodes is swapped at most once. Therefore,
+S≤|C||R|=|C|(p−|C|). Moreover,K≤S, ∆ H≤p−1. Together withe =O(p2), this
+gives the worst-case complexityTFGCR =O(p3).
+When the conditioning-set size is bounded, the original and intermediate graphs remain
+sparse, and the maximum in-degree∆ H is bounded, we haveS =O(p),K =O(p),e =O(p),
+and the overall complexity becomesO(p), that is, approximately linear in the size of the
+input graph.
+The ROS bound is the local-search bound reported by Xie et al. (2025); common input
+reading and output materialization must also be counted in an end-to-end implementation.
+Itsk,m and FGCR’sS,K, ∆ H measure different operations. Comparing these upper bounds
+cannot prove a strict runtime ranking. We make no claim of a graph class on which FGCR
+is always strictly faster. A fair empirical comparison fixes(G,C,αR), records operation
+counts and memory, and measures both implementations under the same runtime and data
+structures.
+4.4 Illustrative Example
+We next illustrate the specific steps of the algorithm with an example.
+16
+
+PAGE 17
+MDI Maps of Conditioned Bayesian Networks
+A
+C
+B D
+E
+Figure 1: Directed acyclic graphG (the blue nodes represent the conditioning setC, and
+the remaining nodes form the remaining-node setR)
+A
+B
+C
+D
+E
+GraphG
+A
+B
+C
+D
+E
+Intermediate graph (1)
+A
+B
+C
+D
+E
+Intermediate graph (2)
+A
+B
+C
+D
+E
+Intermediate graph (3)
+A
+B
+C
+D
+E
+Intermediate graph (4)
+Figure 2: Step-by-step graph transformations performed by Algorithm 2
+Example 1Let the original DAG beG = (V,E ), where V ={A,B,C,D,E }. Let the
+conditioning set beC ={C,E}, soR =V\C ={A,B,D}. The graph structure is shown
+in Figure 1.
+The detailed execution of Algorithms 1 and 2 is described below.
+First, choose a valid topological order of the original graphG: β= (A,B,C,D,E ). In
+β, the nodes belonging to the conditioning setC ={C,E}appear in the relative order
+αC = (C,E ); the nodes belonging to the remaining-node setR ={A,B,D}appear in
+the relative orderαR = (A,B,D ). Therefore, Algorithm 1 constructs the target order
+α= (αC,αR) = (C,E,A,B,D ).
+Thus, the output of Algorithm 1 isβ= (A,B,C,D,E ), α = (C,E,A,B,D ).
+17
+
+PAGE 18
+Li and Sun
+We next apply Algorithm 2 using the node orders obtained from Algorithm 1 to construct
+the minimal independence map. From Algorithm 1, we haveα= (C,E,A,B,D ). Let
+β0 =β= (A,B,C,D,E ), and initialize the current graph as the original graphG.
+Step 1. Take the rightmost node inαthat has not yet been considered,Y =D. Swap
+the positions ofD and E to obtainβ1 = (A,B,C,E,D ). Since the current graph contains
+no edgeD→E, no edge reversal is required. Then markD as considered.
+Step 2. Take the rightmost unconsidered node inα, Y =B. Since the current graph
+contains the edgeB →C, first add the edgeA→B so that B →C becomes covered,
+and then reverse B →C. After swapping B and C in the current order, we obtain
+β2 = (A,C,B,E,D ).
+At this point, the right neighbor ofB is Z = E. Since E lies to the left ofB in α,
+B and E must be swapped. Because the current graph contains the edgeB→E, add the
+edgesA→E, C →E, then reverseB→E, and finally swap the node positions to obtain
+β3 = (A,C,E,B,D ). MarkB as considered.
+Step 3. Take the rightmost unconsidered node inα, Y = A. The current graph
+contains the covered arcA→C, so this arc is directly reversed. SwappingA and C gives
+β4 = (C,A,E,B,D ).
+At this point, the right neighbor ofA is Z =E. SinceE lies to the left ofA in α, A and
+E must be swapped. First reverse the edgeA→E in the current graph, and then swap the
+nodes to obtainβ5 = (C,E,A,B,D ). MarkA as considered. Nowβ5 = (C,E,A,B,D ) =α.
+Step 4. From the current graphH, take the subgraph induced byR to obtain the minimal
+independence mapHR of the conditional distribution model, as shown below.
+A B D
+Figure 3: Minimal independence mapHR
+5. Correctness and Structural Analysis
+This section proves the target-order transformation and derives the structural consequences
+needed later. It is intentionally separate from the algorithmic description in Section 4. The
+algorithm is stated there; here we establish correctness, conditional I-map status, edgewise
+minimality, fill-in characterization, and ROS equivalence.
+5.1 Correctness of the Target-Order Transformation
+Algorithm 2 adjusts the current node order through adjacent swaps and, when necessary,
+modifies the graph using “covering–covered-arc reversal.” This section presents the main
+correctness result for the full-graph transformation.
+Theorem 11 (Correctness of the Target-Order Transformation)Let G = ( V,E )
+be a DAG withV = C ˙∪R, and letβbe a topological order ofG. Define the target order
+α= (β|C,β|R). Algorithm 2 directly usesβas the initial node order and, after finitely
+many adjacent node swaps, arc-covering operations, and covered-arc reversals, produces
+18
+
+PAGE 19
+MDI Maps of Conditioned Bayesian Networks
+the full-graph DAGH. Then H = Gα, where Gαdenotes the unique MDI map of the
+independence modelI(G) with respect to the target orderα.
+Proof By the construction of the target orderα= (β|C,β|R), the relative orders of nodes
+withinC and withinR inαare the same as those in the initial topological orderβ. Therefore,
+throughout the execution of the algorithm, the relative order within each of the two partitions
+remains unchanged, and every actual adjacent inversion swap occurs between a node inR
+and a node inC.
+Moreover, one can verify step by step that throughout the execution, the current graph
+remains a DAG consistent with the current node order. Each adjacent swap strictly decreases
+the number of inversions of the current order relative toα, so the algorithm terminates after
+finitely many swaps, and the current node order at termination isα.
+For independence models, adding arcs can only remove separation relations from the
+graph, while reversing a covered arc preserves Markov equivalence. Hence the final graphH
+satisfiesI(H)⊆I(G). Conversely, by induction on the number of occurrences of a newly
+added arc in anS-active route, one can prove thatI(Gα)⊆I(H). The within-partition
+relative-order preservation property of the target order is used to determine the orientations
+of locally added adjacencies and, in the critical cases, directly eliminates the additional
+node-order configurations that would otherwise have to be considered in the proof for a
+general target order.
+A detailed proof is provided in Appendix A.
+Theorem 11 shows that Algorithm 2 applies the target-order MDI-map transformation
+mechanism to the full DAGG using the target orderα= (αC,αR) determined by the
+conditioning requirement, thereby producingH =Gα.
+Moreover, sinceH = Gαis consistent with the target orderα= (αC,αR), and every
+node inC precedes every node inR, there is no directed arc fromR to C in H, that is,
+paH(C) = (⋃
+c∈C paH(c))\C = ∅.Therefore, the conditioning setC forms a root set in
+the full graphH. The assertion in Algorithm 2 is not an additional assumption. It follows
+from the invariant that the current graph is a DAG consistent with the current working
+order: before a swap, an existing arc between the adjacent nodes can only beY→Z, never
+Z→Y. In an implementation, retaining this assertion is useful for detecting an inconsistent
+graph or an erroneous parent-set update.
+Section 4 presents the computational implementation of FGCR. Given an original DAG
+G = (V,E ), a conditioning setC⊂V, and the remaining-node setR = V\C, FGCR
+first constructs the target orderα= (αC,αR), in which all conditioning nodes precede the
+remaining nodes. It then constructs, on the full node setV, the MDI mapH =Gαof G
+with respect toα, and finally takes the induced subgraphHR =H[R] on R.
+This section further investigates the structural and statistical properties of this full-graph
+reduction. We first prove that, under the target order in which all conditioning nodes
+precede the remaining nodes, restricting the full-graph MDI mapGαto the remaining-node
+set yieldsHR, which is exactly the MDI map of the conditional independence modelI(G)C
+with respect to the orderαR. This establishes a reduction from the construction of the
+conditional-model MDI map to the construction of a target-order MDI map on the full graph.
+We then analyze the structural relationship betweenHR and the original induced subgraph
+19
+
+PAGE 20
+Li and Sun
+GR =G[R], prove thatHR can be represented asGR augmented by a minimal fill-in edge
+set, and further establish the structural equivalence between the full-graph transformation
+of FGCR and the local fill-in search of ROS. Finally, we analyze the statistical properties
+of the resulting conditional graph in terms of exact probabilistic representation, KL-error
+decomposition, and finite-sample error bounds, and discuss how different target orders affect
+the structural complexity of the conditional graph and finite-sample estimation efficiency.
+5.2 Conditional-Graph I-Map and Minimality
+The full-graph stage of FGCR producesH =Gα, whereα= (αC,αR) places all conditioning
+nodes before the remaining nodes. This section establishes the central property of this
+full-graph reduction: after restrictingH to the remaining-node setR, the resulting induced
+subgraph HR =H[R] is the MDI map of the conditional independence modelI(G)C with
+respect to the orderαR. The proof proceeds in two steps. We first show thatHR is an
+I-map ofI(G)C, and then establish its edgewise minimality with respect toαR.
+5.2.1 I-map Property
+Lemma 12 (Conditioning on a Root Set)Let H be a DAG, letC have no parents
+outside C, and setR =V\C. ThenI(H[R]) =I(H)C.
+Proof Fix disjoint A,B,S ⊆R. Any path with endpoints in R that visits C has a
+boundary edgec→r, withc∈C,r ∈R. The vertex c is internal and is a non-collider
+on this path because one incident edge has its tail atc. Conditioning on C blocks the
+path. Thus an active path givenS∪C must stay entirely inR. No vertex ofR can have a
+descendant inC, since such a directed path would contain an arc enteringC from outside.
+Moreover, any directed path between vertices ofR stays inR. Hence a collider on an
+R-path has a descendant inS∪C inH exactly when it has a descendant inS inH[R]. The
+non-collider conditions also coincide. Active paths betweenA and B therefore coincide in
+the two problems, which proves the equality.
+Theorem 13 (I-map Property of the Conditional Model)Let G = ( V,E ) be a
+DAG, letC⊂V be the conditioning set, and letR = V\C be the remaining-node set.
+Given a topological orderβof G, defineαC =β|C,αR =β|R, and construct the target order
+α= (αC,αR) in which all conditioning nodes precede the remaining nodes. LetH = Gα
+be the MDI map ofI(G) with respect to the target orderα, and letHR = H[R]. Then
+I(HR)⊆I(G)C, that is,HR is anI-map of the conditional independence modelI(G)C.
+Furthermore, for everyPC∈P(G)C,I(HR)⊆I(PC), soHR is also anI-map of the
+conditional distribution modelP(G)C.
+Proof Since H = Gαis anI-map ofI(G), we haveI(H)⊆I(G). By the definition of
+conditioning of an independence model, this inclusion further impliesI(H)C ⊆I(G)C.
+Since C forms a root set in H, Lemma 12 gives I(HR) = I(H)C. Therefore,
+I(HR) = I(H)C ⊆I(G)C, so HR is an I-map of the conditional independence model
+I(G)C. Furthermore, Proposition 9 gives, without faithfulness,I(G)C⊆I(PC) for every
+20
+
+PAGE 21
+MDI Maps of Conditioned Bayesian Networks
+PC∈P(G)C. Combining the above inclusions,I(HR)⊆I(G)C⊆I(PC),∀PC∈P(G)C.
+Hence HR is also anI-map of the conditional distribution modelP(G)C.
+5.2.2 Edgewise Minimality
+The preceding subsection establishes thatHR is anI-map of the conditional independence
+modelI(G)C. To further show thatHR is the MDI map with respect to the orderαR, it
+remains to prove that no directed edge inHR can be deleted.
+Since H =Gαis the MDI map ofI(G) with respect to the orderα, its parent sets are
+minimal relative to that order. Specifically, for any nodey∈V, letPreα(y) ={v∈V :v≺α
+y}denote the set of predecessors ofy in α, and letBy = paH(y). Then By is a minimal
+subset of Preα(y) satisfying y⊥G Preα(y)\By|By. We use this property to show that
+deleting any edge fromHR introduces a conditional independence relation that does not
+belong toI(G)C, and therefore destroys theI-map property.
+Theorem 14 (Minimality ofHR) Under the conditions of Theorem 13, deletion of any
+edge fromHR destroys the I-map property forI(G)C. ConsequentlyHR is the unique ordered
+MDI map. Under the conditional-faithfulness witness condition of Proposition 9, it is also
+minimal for the entire conditional distribution family at the specified context.
+Proof Fix x→y in HR and writeB = paH(y), S =B\{x}, andT = Preα(y)\B. The
+ordered local Markov statement inG is y⊥GT|S∪{x}. Ify⊥Gx|S, contraction would
+givey⊥GT∪{x}|S, contradicting minimality ofB. Thusy̸⊥Gx|S.
+Let Q =C\B. SinceC precedes y, Q⊆T, soy⊥G Q|S∪{x}by decomposition. If
+y⊥Gx|S∪Q, graphical intersection would givey⊥GQ∪{x}|S and hencey⊥Gx|S, a
+contradiction. Here intersection is a property ofd-separation, established in Section 2, not
+an assumption onPC. Sincex,y∈R,
+y̸⊥Gx|C∪(paHR(y)\{x}). (5.1)
+In H′
+R =HR−(x,y ), x precedes y and is not its parent; the local Markov property gives
+y⊥H ′
+R
+x|paHR(y)\{x}. Equation (5.1) says this independence is absent fromI(G)C. This
+proves edgewise minimality; ordered uniqueness follows becauseI(G)C is a graphoid.
+Finally, the additional witnessP∗C violates every such deleted-edge independence, while
+all family members satisfy the I-map property. Thus no edge can be deleted while represent-
+ing the whole family. This does not assert minimality for each individual parameterization.
+5.3 Minimal Fill-In Representation
+The previous section proves, from theI-map property and edgewise minimality, thatHR is
+the MDI map of the conditional model with respect toαR. However, the actual construction
+of FGCR is performed on the full node setV: the algorithm first obtainsH =Gα, and then
+obtains HR =H[R] through restriction. Thus, FGCR does not directly search for the fill-in
+edges that must be added to the original induced subgraphGR =G[R].
+21
+
+PAGE 22
+Li and Sun
+Although FGCR does not explicitly search for fill-in edges onGR, its final output can
+still be compared with methods based on augmenting the original induced subgraph. This
+section therefore studies the structural relationship betweenHR and the original induced
+subgraph GR.
+Lemma 15 (Preservation of Original Induced Edges)LetG = (V,E ) be a DAG, let
+C⊂V be the conditioning set, and letR = V\C be the remaining-node set. Given a
+topological orderβofG, letαC =β|C,αR =β|R, and construct the target orderα= (αC,αR).
+LetH =Gαbe the MDI map ofI(G) with respect toα, and letGR =G[R],HR =H[R].
+Then every directed edge in the original induced subgraphGR is retained inHR, that is,
+E(GR)⊆E(HR).
+Proof Take anyx→y∈E(GR). SinceαR is a topological order ofGR, x precedes y in
+αR.
+Suppose, for contradiction, thatx→y /∈E(HR). SinceH is consistent with the target
+order αand x,y ∈R, x is a predecessor ofy but not a parent ofy in H. By the ordered
+local Markov property of DAGs,y⊥H x|paH(y). Since I(H)⊆I(G), it follows that
+y⊥Gx|paH(y).
+However, the original DAGG contains the direct edgex→y, and the length-one path
+x→y cannot be blocked by any conditioning set that excludes the endpointsx and y. This
+contradictsy⊥Gx|paH(y).
+Therefore, x→y∈E(HR). Sincex→y was chosen arbitrarily,E(GR)⊆E(HR).
+ByLemma15, GR isasubgraphof HR. Therefore,HR canbewrittenas HR =GR+∆ αR
+G,C,
+where ∆ αR
+G,C = E(HR)\E(GR) denotes the set of additional edges introduced by FGCR
+among the remaining nodes. SinceHR is consistent withαR, andαR is also a topological
+order ofGR, all edges in∆ αR
+G,C are oriented from earlier nodes to later nodes according to
+αR.
+To formally describe these additional edges, define the candidate fill-in edge set relative
+to the target orderαR as
+EαR
+c (R) ={x→y :x,y∈R, x≁GR y, x≺αR y}.
+Among all candidate edges, we focus on fill-in edge sets that make the augmented graph
+GR an I-map of the conditional independence modelI(G)C, with every added edge being
+indispensable.
+Definition 16 (Minimal Fill-In Edge Set Relative to a Given Target Order)
+Given a DAGG = (V,E ), a conditioning setC⊂V, R =V\C, and a topological orderαR
+of GR, take any∆ ⊆EαR
+c (R) and letF =GR + ∆. If
+(F1) I(F )⊆I(G)C;
+(F2) for everye∈∆ , I(F−e) ⊈I(G)C,
+then ∆ is called a minimal fill-in edge set relative to the target orderαR.
+22
+
+PAGE 23
+MDI Maps of Conditioned Bayesian Networks
+Condition (F1) requires the DAGF to be anI-map of the conditional independence
+model I(G)C. Condition (F2) requires every newly added edge to be necessary, in the sense
+that deleting any such edge creates at least oned-separation relation not supported by
+I(G)C. Equivalently, there is no proper subset∆′⊊ ∆ such thatI(GR + ∆′)⊆I(G)C still
+holds.
+We next show that the set of newly added edges produced by FGCR satisfies exactly
+this property.
+Theorem 17 (Minimality of the FGCR Fill-In Edges)Let HR be the conditional-
+model MDI map obtained by FGCR under the target orderαR, and define∆ αR
+G,C =E(HR)\
+E(GR). Then ∆ αR
+G,C is a minimal fill-in edge set relative to(G,C,αR).
+Proof By Lemma 15,HR = GR + ∆αR
+G,C. Since HR is consistent withαR, andαR is a
+topological order ofGR, every edge in∆ αR
+G,C connects two nodes that were non-adjacent in
+GR and is oriented according toαR. Therefore, ∆ αR
+G,C⊆EαR
+c (R).
+By Theorem 13,I(HR)⊆I(G)C. Together withHR =GR + ∆αR
+G,C, this givesI(GR +
+∆ αR
+G,C)⊆I(G)C, so condition (F1) holds. On the other hand, by Theorem 14, for every
+e∈E(HR), I(HR−e) ⊈I(G)C. In particular, this holds for everye∈∆ αR
+G,C. Therefore,
+I(GR + ∆αR
+G,C−e) ⊈I(G)C,∀e∈∆ αR
+G,C, so condition (F2) holds.
+Hence, ∆ αR
+G,C is a minimal fill-in edge set relative to(G,C,αR).
+The above result shows that although FGCR does not explicitly search for fill-in edges, its
+final output still admits the standard representation “original induced subgraph + minimal
+fill-in edges.” Moreover, an equivalence can be established between ordered MDI maps and
+minimal fill-in representations.
+Theorem 18 (Ordered MDI Maps and Minimal Fill-In)LetαR be a topological or-
+der ofGR, let ∆ ⊆EαR
+c (R), and letF =GR + ∆. Then the following two statements are
+equivalent:
+1. F is the MDI map of the conditional independence modelI(G)C with respect to the node
+orderαR;
+2. ∆ is a minimal fill-in edge set relative to(G,C,αR).
+Proof
+We first prove necessity. Suppose thatF is the MDI map ofI(G)C with respect toαR.
+ThenI(F)⊆I(G)C, so condition (F1) holds. SinceF is edgewise minimal,I(F−e) ⊈I(G)C
+for everye∈E(F). In particular, this holds for everye∈∆ ⊆E(F), so condition (F2) also
+holds. Therefore, ∆ is a minimal fill-in edge set.
+We next prove sufficiency. Suppose that ∆ is a minimal fill-in edge set relative to
+(G,C,αR). By (F1),I(F)⊆I(G)C, soF is anI-map ofI(G)C. Moreover, since∆ ⊆EαR
+c (R)
+and αR is a topological order ofGR, the graphF =GR + ∆ is consistent withαR.
+It remains to show that no edge ofF can be deleted. PartitionE(F) =E(GR) ˙∪∆ into
+two cases.
+First, ife∈∆ , then by (F2),I(F−e) ⊈I(G)C.
+23
+
+PAGE 24
+Li and Sun
+Second, consider any original induced edgee =x→y∈E(GR). Let F′=F−(x,y ).
+Since F′remains consistent withαR and x≺αR y, after deletingx→y, the nodex is a
+predecessor ofy but no longer a parent ofy. Hence, by the local Markov property of DAGs,
+y⊥F ′x|paF ′(y). (5.2)
+However, the original DAGG contains the direct edgex→y. For any conditioning set
+that excludesx and y, includingC∪paF ′(y) (which excludesx,y: both lie inR, x is no
+longer a parent, and a DAG has no self-parent), the length-one pathx→y remains active.
+Therefore, y̸⊥Gx|C∪paF ′(y), equivalently,
+y̸⊥I(G)C x|paF ′(y). (5.3)
+Relation (5.2) belongs toI(F′), whereas(5.3) shows that the corresponding conditional
+independence relation does not belong toI(G)C. Hence,I(F′) ⊈I(G)C.
+Therefore, whethere is a newly added fill-in edge or an original edge ofGR, deletinge
+yields a graph that is no longer anI-map ofI(G)C. Thus,F is the MDI map ofI(G)C with
+respect to the orderαR. The equality above is structural and does not require a faithfulness
+assumption; under the conditional-faithfulness witness condition, the same graph also serves
+as the corresponding MDI map for the conditional distribution family.
+5.4 Structural Equivalence with ROS
+The preceding section shows that the FGCR output can be interpreted either as the MDI
+map of the conditional independence modelI(G)C with respect toαR, or as the graph
+obtained by adding a minimal fill-in edge set to the original induced subgraphGR. This
+allows FGCR to be compared with the ROS algorithm proposed by Xie et al. in terms of
+the same theoretical object.
+The construction procedures of the two methods are different. FGCR starts from the full
+DAG, first constructs a target order in which all conditioning nodes precede the remaining
+nodes, then obtains the full-graph target-order MDI map through covered-arc reversals, and
+finally takes its induced subgraph on the remaining-node setR.
+ROS instead focuses directly on local structural changes induced by conditioning. Within
+the ancestral region associated with the conditioning set, it processes collider structures in
+the reverse order of a given topological order and identifies the fill-in edges that must be
+added toGR. Adding these fill-in edges to the induced subgraphGR produces the required
+minimal independence map.
+Thus, the two methods differ essentially in their intermediate operations: the core
+operations of FGCR are target-order adjustment and covered-arc reversal, whereas those of
+ROS are reverse-order search over conditioning-related collider structures and connections
+among parent nodes. We next show that despite these different construction procedures, the
+two methods produce exactly the same minimal independence map when they use the same
+remaining-node order.
+First, I(G)C is still a Graphoid on the remaining-node setR. Indeed,I(G) satisfies the
+Graphoid properties of symmetry, decomposition, weak union, contraction, and intersection.
+24
+
+PAGE 25
+MDI Maps of Conditioned Bayesian Networks
+For any conditional independence relation inI(G)C, adding the fixed setC to the conditioning
+set inI(G) preserves all five axioms. Therefore, for a given node orderαR, the MDI map of
+I(G)C with respect toαR is unique.
+Theorem 19 (Structural Equivalence of FGCR and ROS)Let G = ( V,E ) be a
+DAG, C ⊂V, and R = V \C. Let βbe a topological order ofG, and let αR = β|R.
+Suppose FGCR producesHR = H[R] under the conditioning target orderα= (β|C,β|R),
+and suppose ROS produces the conditional-model DAGGROS
+R under the same original graph
+G, conditioning setC, and topological orderβ. ThenHR =GROS
+R .
+Proof By Theorem 14, the FGCR output HR is the MDI map of the conditional
+independence modelI(G)C with respect to the orderαR. On the other hand, ROS orients
+the newly added edges between the remaining nodes according to the original topological
+order β. SinceαR =β|R, the conditional-model DAG produced by ROS is consistent with
+αR. According to the results of Xie et al. on minimal fill-in edge sets and the correctness of
+ROS, the fill-in edge set produced by ROS forms a minimal fill-in edge set relative to this
+order, and henceGROS
+R is also the MDI map of the conditional model with respect toαR.
+Since I(G)C is a Graphoid and a Graphoid has a unique MDI map relative to a given node
+order, I(G)C cannot have two distinct ordered MDI maps with respect toαR. Therefore,
+HR =GROS
+R .
+By Lemma 15, the FGCR output satisfiesHR =GR + ∆αR
+G,C. On the other hand, the
+ROS output can be written asGROS
+R = GR + ∆ αR
+ROS. Combining this with Theorem 19
+immediately gives equality of the newly added edge sets:∆ αR
+G,C = ∆ αR
+ROS.
+The above results show that FGCR and ROS are not two approximation algorithms
+with different target structures, but rather two different construction mechanisms for the
+same ordered conditional-model MDI map. Their difference lies mainly in the computational
+pathway: ROS starts fromGR and explicitly searches for the minimal fill-in edges required
+by conditioning, whereas FGCR encodes the conditioning requirement as a target order on
+the full node set, first obtainsGαthrough covered-arc reversals, and then restricts it to the
+remaining-node set. Under the same original DAG, conditioning set, and remaining-node
+order, the two methods produce exactly the same final graph structure and newly added
+edge set.
+6. Probabilistic and Finite-Sample Theory
+This section studies probability representation and estimation separately from the graph-
+structural results. The order of presentation is: exact factorization, KL decomposition, local
+and global error bounds, the computable cell-weighted certificate, and target-order selection.
+All statements apply to any candidate conditional graph satisfying the structural conditions;
+FGCR and ROS are constructor alternatives.
+The preceding results establish that the FGCR outputHR is the MDI map of the
+conditional model with respect to the remaining-node orderαR. This section further studies
+its probabilistic representation and finite-sample properties. We first prove that the true
+conditional distribution factorizes exactly according toHR. We then analyze the finite-
+sample estimation error of the local CPTs. Based on these results, we establish a KL
+25
+
+PAGE 26
+Li and Sun
+decomposition that separates structural misspecification from parameter-estimation error,
+and further derive a high-probability bound that controls the overall conditional-distribution
+error directly in terms of the total sample size.
+6.1 Exact Factorization over the Conditional Graph
+Fix a conditioning eventXC =xC with P (XC =xC)> 0, and define the true conditional
+distribution byPC(xR) =P (XR =xR|XC =xC).
+By the structural results established above,HR is an I-map of the conditional model.
+Therefore, PC satisfies the conditional independence relations encoded byHR. By the
+Markov factorization property of DAGs,PC factorizes according to the parent structure of
+HR.
+Define
+QC
+HR(xR) =
+∏
+v∈R
+PC
+(
+xv|xpaHR(v)
+)
+.
+Here, QC
+HR denotes the distribution obtained by combining the true local conditional
+probabilities according to the DAG structure ofHR, and therefore reflects the structural
+representation induced byHR.
+Theorem 20 (Exact Factorization overHR) For anyPC∈P(G)C,
+PC(xR) =
+∏
+v∈R
+PC
+(
+xv|xpaHR(v)
+)
+.
+Equivalently, QC
+HR =PC.
+Theorem 20 shows that when the true local conditional probabilities are known,HR intro-
+duces no probability error due to structural misspecification. Therefore,DKL(PC∥QC
+HR) = 0
+and dTV(PC,QC
+HR) = 0; moreover, for any eventA⊆XR, QC
+HR(A) =PC(A).
+6.2 KL Decomposition: Structure versus Estimation
+To compare the correct conditional graphHR with the original induced subgraphGR within
+a unified framework, consider a candidate DAGD defined on the remaining-node setR
+and consistent withαR. Using the local conditional probabilities from the true conditional
+distribution, defineQC
+D(xR) = ∏
+v∈RPC(xv|xpaD(v)). Further, estimate the local conditional
+probability of each node from finite samples and defineˆQC
+D,n(xR) = ∏
+v∈R ˆPC
+n (xv|xpaD(v)).
+Here, QC
+D reflects only the representational adequacy of the candidate structureD for the
+true conditional distribution, whereasˆQC
+D,n additionally includes finite-sample parameter-
+estimation error. Accordingly, define the structural misspecification error byεstr(D) =
+DKL(PC∥QC
+D), and define the aggregate local CPT estimation error by
+εest,n(D) =
+∑
+v∈R
+EPC(XpaD(v))
+[
+DKL
+(
+PC(Xv|XpaD(v))
+ ˆPC
+n (Xv|XpaD(v))
+)]
+.
+HereDn = (X(1)
+R ,...,X (n)
+R ) is the random training sample andˆPC
+n is a function ofDn.
+The displayed expectation averages over a fresh parent configuration underPC, holding
+26
+
+PAGE 27
+MDI Maps of Conditioned Bayesian Networks
+the fitted CPTs fixed; thusεest,n(D) is a random, sample-conditional loss. It is not already
+an expectation over training samples. The theorem below holds for every realized sample
+with positive fitted CPTs. TakingEDn on both sides yields the corresponding expected-risk
+decomposition (in the extended nonnegative sense).
+Theorem 21 (KL Error Decomposition)Suppose that ˆQC
+D,n(xR) > 0 for every state
+xR satisfying PC(xR)> 0. Then
+DKL
+(
+PC∥ˆQC
+D,n
+)
+=εstr(D) +εest,n(D).
+Theorem 21 decomposes the overall distributional error into two components. The term
+εstr(D) represents the structural misspecification error induced by the constraints imposed
+by the candidate graphD on the true conditional distribution, whereasεest,n(D) represents
+the statistical error arising from finite-sample estimation of the local CPTs under a fixed
+graph structure.
+First considerD =HR. By Theorem 20,QC
+HR =PC, and henceεstr(HR) = 0. Therefore,
+DKL
+(
+PC∥ˆQC
+HR,n
+)
+=
+∑
+v∈R
+EPC(XpaHR(v))
+[
+DKL
+(
+PC(Xv|XpaHR(v))
+ ˆPC
+n (Xv|XpaHR(v))
+)]
+.
+Thus, once HR is fixed, its overall KL error consists entirely of local CPT parameter-
+estimation error.
+Corollary 22 (Asymptotic Consistency of the FGCR Conditional Model)
+Suppose thatHR is fixed and that, for every parent configuration having positive probability
+under PC, the local CPT is estimated using the BDeu posterior mean with a fixedISS> 0.
+Then, asn→∞, DKL(PC∥ˆQC
+HR,n)→0 almost surely.
+By Pinsker’s inequality, dTV(PC, ˆQC
+HR,n) ≤
+√
+1
+2DKL(PC∥ˆQC
+HR,n). Therefore,
+dTV(PC, ˆQC
+HR,n) →0. For any fixed event A ⊆ XR, by the definition of total vari-
+ation distance, ⏐⏐⏐PC(A)−ˆQC
+HR,n(A)
+⏐⏐⏐≤dTV
+(
+PC, ˆQC
+HR,n
+)
+,
+so ˆQC
+HR,n(A)→PC(A). Thus, on the fixed correct structureHR, provided that the local
+CPT estimators are consistent, both the estimated conditional distribution and any fixed
+probability query converge to their true values.
+We next consider the original induced subgraphGR used by IC-Method. When condi-
+tioning closure does not hold,GR is generally not an I-map of the conditional model. Define
+QC
+GR(xR) = ∏
+v∈RPC(xv|xpaGR(v)). By the edge-preservation property established above,
+E(GR)⊆E(HR). For eachv∈R, define the additional-parent set introduced by FGCR as
+∆ v = paHR(v)\paGR(v). SinceHR =GR + ∆αR
+G,C, we havepaHR(v) = paGR(v)∪∆ v.
+Theorem 23 (Conditional-Mutual-Information Decomposition)Under the above
+conditions,
+DKL
+(
+PC∥QC
+GR
+)
+=
+∑
+v∈R
+IPC
+(
+Xv;X∆v|XpaGR(v)
+)
+.
+27
+
+PAGE 28
+Li and Sun
+Theorem 23 expresses the overall structural misspecification ofGR as a sum of nodewise
+conditional mutual information terms. The term corresponding to nodev quantifies the
+residual conditional dependence betweenXv and the additional parent variablesX∆v, given
+the original parentsXpaGR(v). Therefore, structural misspecification is determined by the
+strength of the omitted conditional dependencies and cannot be assessed solely by the
+number of fill-in edges.
+Applying Theorem 21 toD =GR gives
+DKL
+(
+PC∥ˆQC
+GR,n
+)
+=
+∑
+v∈R
+IPC
+(
+Xv;X∆v|XpaGR(v)
+)
++εest,n(GR).
+Under consistent local CPT estimation,εest,n(GR)→0, and hence
+DKL
+(
+PC∥ˆQC
+GR,n
+)
+→
+∑
+v∈R
+IPC
+(
+Xv;X∆v|XpaGR(v)
+)
+.
+If at least one conditional mutual information term on the right-hand side is positive, the
+structural misspecification ofGR persists in the large-sample limit. If all relevant conditional
+mutual information terms are zero, a particularPC may still factorize exactly according to
+GR.
+For any candidate graphD and eventA⊆XR, the query error satisfies
+⏐⏐⏐PC(A)−ˆQC
+D,n(A)
+⏐⏐⏐≤dTV
+(
+PC, ˆQC
+D,n
+)
+≤
+√
+1
+2DKL
+(
+PC∥ˆQC
+D,n
+)
+.
+Therefore, the finite-sample error associated withHR consists only of parameter-estimation
+error, which vanishes as the sample size increases. By contrast, whenGR is used directly,
+any nonzero structural misspecification term persists in the overall distributional error even
+in the large-sample limit. When conditioning closure holds,HR =GR, and the structural
+misspecification term is zero for both graphs.
+6.3 Uniform Worst-Cell Bound
+The preceding two subsections establish, respectively, a local CPT estimation-error bound
+for a fixed parent configuration and an additive decomposition of the overall KL divergence
+in terms of local estimation errors. We now relate the effective sample sizes of parent
+configurations to the total sample sizen, thereby obtaining a global finite-sample high-
+probability bound for the fixed structureHR.
+For each nodev∈R, letqv denote its number of parent configurations, and defineQH =∑
+v∈Rqv, L H = ∑
+v∈Rrvqv. Here,QH is the total number of parent configurations across
+all nodes, whereasLH is the total number of node-state/parent-configuration combinations.
+By the definition of the parameter dimension,d(HR) =LH−QH.
+To uniformly control the effective sample sizes of all positive-probability parent configu-
+rations, define
+πmin = min
+v∈R,a
+PC(XpaHR(v)=a)>0
+PC
+(
+XpaHR(v) =a
+)
+,
+and assume thatπmin> 0. This assumption requires the probability masses of all positive-
+probability parent configurations under the true conditional distributionPC to be uniformly
+bounded away from zero.
+28
+
+PAGE 29
+MDI Maps of Conditioned Bayesian Networks
+Lemma 24 (Uniform Parent-Cell Counts)LetX(1)
+R ,...,X (n)
+R be i.i.d. fromPC. For
+any δ∈(0, 1), if n≥8
+πmin
+log QH
+δ, then, with probability at least1−δ, Nn(a)≥nπmin
+2
+simultaneously for every nodev and every positive-probability parent configurationa.
+Lemma 24 relates the random effective sample sizeNn(a) of a parent configuration in
+Section 6.5 to the total sample sizen. OnceHR is fixed, ifπmin > 0, the effective sample
+sizes of all positive-probability parent configurations grow linearly withn.
+To further control the KL divergence induced by local probability-estimation errors,
+assume that the true local conditional probabilities admit a uniform positive lower bound:
+θmin = min
+v∈R,a,x
+PC(XpaHR(v)=a)>0
+PC
+(
+Xv =x|XpaHR(v) =a
+)
+> 0.
+Let Av = ISS/qv, A max = maxv∈RAv, and defineεn(δ) =
+√
+log(4LH/δ)
+nπmin
++ 2Amax
+nπmin
+.
+The use of a positive BDeu equivalent sample size is important here. Even when a parent
+configuration or a child state is unobserved in the sample, the BDeu posterior mean assigns
+it positive mass through the Dirichlet pseudocountAv/rv. Consequently, ˆQC
+HR,n(xR)> 0 on
+every finite-state configuration, so the KL decomposition below does not encounter alog(0)
+term. This regularization does not remove the dependence of the bound onπmin and θmin;
+it only guarantees that the estimated distribution is well-defined.
+Theorem 25 (Uniform Worst-Cell High-Probability KL Bound forHR) Suppose
+that HR represents the true conditional distributionPC exactly and that the local CPTs
+are estimated using the BDeu posterior mean with a fixedISS> 0. Ifn≥8
+πmin
+log 2QH
+δ and
+εn(δ)≤θmin
+2 , then, with probability at least1−δ,
+DKL
+(
+PC
+ ˆQC
+HR,n
+)
+≤2
+θmin
+( ∑
+v∈R
+rv
+)
+ε2
+n(δ).
+The constants and smoothing contribution can be made explicit. Putb = log(4LH/δ)
+and t =nπmin. Since (
+√
+b/t + 2Amax/t)2≤2b/t + 8A2
+max/t2, the same event gives
+DKL(PC∥ˆQC
+HR,n)≤4 ∑
+v∈Rrv
+θmin
+b
+t + 16 ∑
+v∈Rrv
+θmin
+A2
+max
+t2 . (6.1)
+This inequality absorbs the cross term rather than discarding it. For a fixed graph, distribu-
+tion, δ, and ISS, the first term determines then−1 asymptotic order. That conclusion is
+not uniform in growing state spaces, vanishingπmin or θmin, or increasing prior mass. The
+conditions of the theorem, includingεn(δ)≤θmin/2, remain necessary.
+Corollary 26 (Total-Variation and Probability-Query Error Bounds)Under the
+conditions of Theorem 25, with probability at least1−δ,
+dTV
+(
+PC, ˆQC
+HR,n
+)
+≤
+√∑
+v∈Rrv
+θmin
+εn(δ).
+Therefore, for any eventA⊆XR,
+⏐⏐⏐PC(A)−ˆQC
+HR,n(A)
+⏐⏐⏐≤
+√∑
+v∈Rrv
+θmin
+εn(δ).
+29
+
+PAGE 30
+Li and Sun
+Thus, onceHR is fixed, its finite-sample estimation error is jointly controlled by the num-
+ber of parent configurations, their probability masses, and the local conditional probabilities.
+The quantitiesQH, LH, πmin, θmin, andAmax are all determined by the parent structure of
+HR. The next section examines how these structural quantities and finite-sample properties
+change when the target order varies and different conditional graphs are obtained.
+Remark 27 (Interpretation whenπmin is small)The assumption πmin > 0 is auto-
+matic for a fixed finite-state model after zero-probability parent configurations are excluded, but
+its numerical value can be extremely small in high-dimensional sparse networks. Asπmin→0,
+both the required sample sizeπ−1
+min log(QH/δ) and the leading error term{nπmin}−1/2 dete-
+riorate. The resulting bound can therefore be conservative, or even larger than the trivial
+range of a probability query, when rare parent configurations are retained. In that regime
+the theorem should be interpreted as a uniform worst-cell guarantee rather than as a sharp
+prediction of average performance. Practical alternatives include reporting cell-specific bounds
+based on the observedNn(a), pooling or truncating rare parent configurations, and replacing
+independent local priors by hierarchical or other shrinkage priors. Such procedures can
+improve estimation in rare cells, but they require additional assumptions and do not change
+the exact structural results of this paper.
+Proposition 28 (Cell-Specific Probability-Weighted KL Bound)Fix the graphHR
+independently of its fitting sample, and suppose it factorizesPC. Writeπv,a =PC(Xpa(v) =a)
+and Nv,a for the observed cell count. Set Av = ISS/qv > 0 and ℓ= log(2LH/δ). For
+N =Nv,a > 0 define
+bv,a = min
+
+
+1, N
+N +Av
+√
+ℓ
+2N + Av(rv−1)
+(N +Av)rv
+
+
+ ;
+for N = 0 set bv,a = 1. Define, using the fitted CPT,
+Bv,a = min
+{
+b 2
+v,a
+∑
+x
+1
+ˆpv(x|a), log 1
+minx ˆpv(x|a)
+}
+.
+With probability at least1−δ,
+DKL(PC∥ˆQC
+HR,n)≤
+∑
+v∈R
+∑
+a:πv,a>0
+πv,aBv,a. (6.2)
+This result requires neither a commonπmin nor a commonθmin.
+Proof For a fixed cell, condition only on its own countN = m > 0. Hoeffding’s
+inequality with the threshold
+√
+ℓ/(2m) has failure probability δ/LH for each child
+state. The BDeu convex-combination formula gives the stated bv,a. Integrating over
+that count preserves the failure bound; a union bound over all child-state/cell pairs
+is valid even though the counts are dependent. Zero-count cells satisfy the bound
+deterministically. Thus every coordinate error is at most bv,a simultaneously. For
+probability vectorsp and strictly positiveq, DKL(p∥q)≤∑
+x(px−qx)2/qx by logu≤u−1.
+Also DKL(p∥q)≤log(1/ minxqx) since ∑
+xpx logpx≤0. Apply both inequalities in each
+30
+
+PAGE 31
+MDI Maps of Conditioned Bayesian Networks
+cell, take their minimum, and use the exact KL decomposition to average with weightsπv,a.
+Equation (6.2) retains the actual probability weights instead of charging every cell at
+the worst effective sample size. It is an oracle-weighted statement:πv,a is unknown in
+applications, so substituting empirical weights does not automatically give a valid confidence
+bound. BDeu smoothing makes the displayed bound finite even for empty cells; it does not
+guarantee sharpness. For known-CPT simulation the weights are available, allowing the
+bound to be checked without estimatingπmin. No numerical validation of this additional
+bound is claimed here.
+6.4 Cell-Specific Probability-Weighted Bound
+Proposition 28 weights local losses by unknown true parent-cell probabilities. Replacing
+those probabilities by raw frequencies alone is not valid. The following result adds an explicit
+confidence correction and remains valid when some true CPT entries or parent-cell masses
+are zero.
+Theorem 29 (Empirical Weighted KL Certificate)FixHR independently of itsn≥1
+fitting observations and suppose thatPC factorizes overHR. Use BDeu with fixedISS> 0.
+Let ˆπv,a =Nv,a/n and set
+tn =
+√
+log(4QH/δ)
+2n .
+Compute the local boundBv,a of Proposition 28 usingℓ= log(4LH/δ) instead oflog(2LH/δ).
+For each node define the nonempty confidence set
+Wv =
+{
+w∈[0, 1]qv :
+∑
+a
+wa = 1, |wa−ˆπv,a|≤tn for everya
+}
+.
+Then the entirely sample-computable quantity
+Un(δ) =
+∑
+v∈R
+max
+w∈Wv
+∑
+a
+waBv,a (6.3)
+satisfies Pr{DKL(PC∥ˆQC
+HR,n)≤Un(δ)}≥1−δ. No unknown πmin or θmin occurs in the
+certificate.
+Proof Use the proof of Proposition 28 with failure budgetδ/2 to bound every local KL
+loss byBv,a simultaneously. Separately, Hoeffding’s inequality for the Bernoulli indicator of
+each parent configuration gives
+Pr{|ˆπv,a−πv,a|>t n}≤2e−2nt2
+n = δ
+2QH
+.
+Union bounding over all QH cells gives (πv,a)a ∈ Wv for every node with failure
+probability at mostδ/2. The empirical vector itself belongs toWv, so the optimization
+problem is never empty. On the intersection of these two events, insert the local
+bounds into the exact KL decomposition and maximize over a set containing each true
+31
+
+PAGE 32
+Li and Sun
+weight vector. Another union bound proves the claim. The two events may use the
+same observations; no independence between estimated weights and local losses is assumed.
+The maximization is a simple bounded-simplex linear program. Initialize
+wa = max{0, ˆπv,a−tn}, sort cells by descending Bv,a, and allocate the remaining
+mass to that order up to min{1, ˆπv,a +tn}. An exchange argument proves optimality:
+moving available mass from a smaller coefficient to a larger one never reduces the objective.
+Its cost isO(∑
+vqv logqv), in addition to computing the local bounds. Thus the certificate
+can be evaluated without an unknown-distribution oracle. It is still potentially conservative;
+computability does not imply a useful numerical rate at moderaten.
+ForK candidate graphs fixed before fitting, applying the theorem atδ/Kmakes all
+certificates simultaneous. Any data-selected candidate, including the one minimizing its
+certificate, then satisfies its displayed bound. This certifies the selected estimate but does not
+assert that its true risk minimizes the candidate risks. The next result provides a different
+guarantee using an independent validation sample.
+6.5 Local CPT Error and Global Finite-Sample Bounds
+Let X(1)
+R ,...,X (n)
+R be i.i.d. samples from the true conditional distributionPC. On the fixed
+structure HR, the local conditional probability of each node is estimated separately from
+the sample, and the corresponding estimator is denoted byˆPC
+n (Xv|XpaHR(v)). Since the
+structural misspecification error ofHR has already been eliminated, the finite-sample error
+arises primarily from local CPT parameter estimation.
+Suppose that a discrete nodev hasrv states, and let the number of parent configurations
+of v in HR be qv = ∏
+u∈paHR(v)ru. For a root nodev, we use the empty-product convention
+qv = 1. Under the standard multinomial parameterization, each parent configuration ofv
+requires rv−1 free parameters. Hence, the CPT ofv contains (rv−1)qv free parameters,
+and the total parameter dimension ofHR is d(HR) = ∑
+v∈R(rv−1)qv.
+The parameter dimensiond(HR) measures the number of free parameters that must
+be estimated to construct the local CPTs onHR. At the same time, the number of
+parent configurations determines how a finite sample is partitioned across different parent-
+configuration cells. Consequently, local estimation accuracy depends not only on the total
+number of parameters but also on the probability mass of each parent configuration under
+PC.
+Fix a nodev and one of its parent configurationsa. LetNn(a) denote the number of
+observations for whichXpaHR(v) =a, and letNn(x,a ) denote the number of observations
+for which bothXv =x and XpaHR(v) =a. WhenNn(a) =m> 0, the empirical conditional
+frequency is ˜pn(x|a) =Nn(x,a )/Nn(a). Conditional onNn(a) =m, the random variable
+Nn(x,a ) follows a binomial distribution with parametersm and p(x|a), wherep(x|a) =
+PC(Xv =x|XpaHR(v) =a). By Hoeffding’s inequality, for anyε>0,
+Pr (|˜pn(x|a)−p(x|a)|≥ε|Nn(a) =m)≤2e−2mε2
+.
+Since E[Nn(a)] =nPC(XpaHR(v) =a), the local estimation accuracy is directly affected by
+the effective sample size associated with the parent configuration. Parent configurations with
+32
+
+PAGE 33
+MDI Maps of Conditioned Bayesian Networks
+smaller probability mass receive fewer effective observations and therefore exhibit greater
+finite-sample uncertainty in their local conditional probabilities.
+To remain consistent with the finite-sample experiments, we further consider the BDeu
+posterior mean with a fixed equivalent sample sizeISS > 0. Let Av = ISS/qv. Then the
+Dirichlet hyperparameter associated with each node-state/parent-configuration combination
+is ISS/(rvqv). For a node statex and parent configurationa, the BDeu posterior mean is
+ˆpB,n(x|a) = Nn(x,a)+Av/rv
+Nn(a)+Av
+. WhenNn(a) =m> 0, ˆpB,n(x|a) = m
+m+Av
+˜pn(x|a) + Av
+m+Av
+1
+rv.
+Thus, the BDeu posterior mean is a convex combination of the empirical conditional frequency
+and the uniform prior probability1/rv. Its finite-sample error therefore consists of the
+random fluctuation of the empirical frequency and the shrinkage bias introduced by prior
+smoothing.
+Proposition 30 (Local BDeu Conditional-Probability Error Bound)Fix a nodev,
+a parent configurationa, and a node statex. For anyδ∈(0, 1), conditional onNn(a) =
+m> 0, with probability at least1−δ,
+|ˆpB,n(x|a)−p(x|a)|≤
+√
+log(2/δ)
+2m + Av(rv−1)
+(m +Av)rv
+.
+The first term in Proposition 30 represents finite-sample random fluctuation and is of
+order O(m−1/2), whereas the second term is induced by BDeu prior smoothing and is of
+order O(m−1). As the effective sample sizem of the parent configuration increases, both
+terms vanish.
+The above result provides a local error bound for a fixed node, parent configuration,
+and state. The next subsection aggregates the local CPT estimation errors through a KL-
+divergence decomposition and analyzes their effects on the overall conditional distribution
+and probability queries.
+6.6 Target Orders and Finite-Sample Efficiency
+The preceding section fixes a conditional-model MDI mapHR and analyzes its probabilistic
+representation, local parameter estimation, and overall finite-sample error. We now examine
+the effects of varying the target order. In FGCR, the remaining-node orderαR determines the
+MDI map of the conditional independence modelI(G)C relative to that order. Conditional
+graphs obtained from different admissible target orders retain the corresponding MDI-map
+property and, under the relevant probabilistic conditions, factorize the true conditional
+distribution exactly, but their parent structures and parameter complexities may differ.
+Accordingly, this section studies the effect of the target order from three perspectives: the
+family of conditional graphs, structural complexity, and finite-sample error.
+6.6.1 Admissible Orders and Conditional-Graph F amilies
+LetB(G) ={β:βis a topological order ofG}denote the set of all topological orders of the
+original DAGG. According to the target-order construction of FGCR, for anyβ∈B(G), its
+restriction β|R to the remaining-node setR can serve as the corresponding target order on
+R. DefineAR(G,C ) ={β|R :β∈B(G)}, and call its elements admissible remaining-node
+orders under the FGCR construction.
+33
+
+PAGE 34
+Li and Sun
+For anyαR∈AR(G,C ), choose anyβ∈B(G) satisfying β|R = αR, and construct
+α= (β|C,αR). Denote the corresponding FGCR conditional graph byHαR
+R =Gα[R].
+By Theorem 14,HαR
+R is the MDI map ofI(G)C with respect to the node orderαR.
+Since a graphoid has a unique MDI map relative to a given node order, anyβ1,β2∈B(G)
+satisfying β1|R =β2|R =αR yield the same conditional graphHαR
+R .
+This gives the following result.
+Corollary 31 (Admissible-Order Representation)For anyαR∈AR(G,C ), HαR
+R is
+the MDI map ofI(G)C with respect toαR.
+Furthermore, for everyPC∈P(G)C, without a faithfulness assumption,
+PC(xR) =
+∏
+v∈R
+PC
+(
+xv|xpaHαR
+R
+(v)
+)
+.
+Corollary 31 shows that varying the target order corresponds to considering the MDI maps
+ofI(G)C under different node orders. All such conditional graphs retain the corresponding
+MDI-map property and, under the above conditions, factorizePC exactly. Their differences
+lie primarily in the specific DAG structures and the resulting parameter complexity.
+6.6.2 Order-Dependent Structural Complexity
+For anyαR ∈AR(G,C ), the parent structure of the conditional graphHαR
+R may vary
+with the target order. Suppose nodev∈R has rv states, and define its number of parent
+configurations inHαR
+R byqαR
+v = ∏
+u∈paHαR
+R
+(v)ru. For a root nodev, we use the empty-product
+conventionqαR
+v = 1.
+The corresponding parameter dimension of the conditional graph isd(αR) =d(HαR
+R ) =∑
+v∈R(rv−1)qαR
+v .
+Further defineQH(αR) = ∑
+v∈RqαR
+v , L H(αR) = ∑
+v∈RrvqαR
+v . Here, QH(αR) is the
+total number of parent configurations across all nodes, whereasLH(αR) is the total number
+of node-state/parent-configuration combinations. By definition,d(αR) =LH(αR)−QH(αR).
+These three quantities directly characterize the local parameterization complexity associ-
+ated with the target order. Specifically,qαR
+v determines the number of parent-configuration
+cells in the CPT of nodev; d(αR) is the total number of free parameters to be estimated;
+and QH(αR) and LH(αR) enter the uniform finite-sample probability bounds.
+In addition to these parameterization-complexity measures,
+|E(HαR
+R )|, |∆ αR
+G,C|, max
+v∈R
+|paHαR
+R
+(v)|.
+can be used as auxiliary structural measures of, respectively, the total number of edges
+in the conditional graph, the number of additional edges relative to the original induced
+subgraph, and the maximum local parent-set size.
+Because the minimality of an MDI map is defined relative to a specified node order, MDI
+maps corresponding to differentαR need not have the same parent sets, numbers of edges,
+or parameter dimensions. Thus, changing the target order does not alter the MDI-map
+property of the resulting conditional graph or its exact factorization ofPC, but it can change
+the graph’s local structure and parameterization complexity. These differences in turn affect
+the effective sample sizes available to individual parent configurations in finite samples.
+34
+
+PAGE 35
+MDI Maps of Conditioned Bayesian Networks
+6.6.3 Order-Dependent Finite-Sample Error
+The target order further affects local parameter estimation in finite samples by changing
+the parent structure and parent-configuration partition of the conditional graph. For any
+αR∈AR(G,C ), define the corresponding minimum positive parent-configuration probability
+by
+πmin(αR) = min
+v∈R,a
+PC(XpaHαR
+R
+(v)=a)>0
+PC
+(
+XpaHαR
+R
+(v) =a
+)
+.
+Further define the uniform positive lower bound on the local conditional probabilities by
+θmin(αR) = min
+v∈R,a,x
+PC
+(
+XpaHαR
+R
+(v)=a
+)
+>0
+PC
+(
+Xv =x|XpaHαR
+R
+(v) =a
+)
+,
+and assume thatθmin(αR)> 0.
+Here,πmin(αR) characterizes the smallest probability mass among the positive-probability
+parent configurations, whereasθmin(αR) is the uniform positive lower bound on the local
+conditional probabilities over all positive-probability parent configurations.
+For the BDeu posterior mean with a fixed equivalent sample sizeISS > 0, define
+Av(αR) = ISS/qαR
+v , A max(αR) = maxv∈RAv(αR), and
+εn(αR,δ) =
+√
+log(4LH(αR)/δ)
+nπmin(αR) + 2Amax(αR)
+nπmin(αR).
+Applying Theorem 25 toHαR
+R for different target orders yields the following order-
+dependent finite-sample result.
+Corollary 32 (Target-Order-Dependent Finite-Sample Error Bound)Let
+αR ∈ AR(G,C ), and suppose that HαR
+R satisfies πmin(αR) > 0 and θmin(αR) > 0.
+If n≥ 8
+πmin(αR) log 2QH(αR)
+δ and εn(αR,δ)≤θmin(αR)
+2 , then, with probability at least1−δ,
+DKL
+(
+PC
+ ˆQC
+HαR
+R ,n
+)
+≤ 2
+θmin(αR)
+( ∑
+v∈R
+rv
+)
+ε2
+n(αR,δ).
+Furthermore, by Pinsker’s inequality, for any eventA⊆XR, with probability at least
+1−δ, ⏐⏐⏐⏐PC(A)−ˆQC
+HαR
+R ,n(A)
+⏐⏐⏐⏐≤
+√ ∑
+v∈Rrv
+θmin(αR)εn(αR,δ).
+For fixedδand ISS, the leading order of the above query-error bound is
+O
+(√
+(∑
+v∈Rrv) logLH(αR)
+nπmin(αR)θmin(αR)
+)
+.
+Thus, different target orders can alter the finite-sample error bound through order-
+dependent quantities such asLH(αR), πmin(αR), and θmin(αR). The number of parent
+35
+
+PAGE 36
+Li and Sun
+configurations determines the local parameterization and the partition of the probability
+cells; the probability mass of each parent configuration determines the effective sample
+size available to the corresponding local conditional distribution; and the local conditional
+probabilities affect the sensitivity of KL divergence to local estimation errors.
+The parameter dimensiond(αR) measures the number of free parameters that must be
+estimated under a given target order, but finite-sample error also depends on the probability
+masses of parent configurations and on the local conditional probabilities. Therefore, neither
+the number of edges nor the parameter dimension alone is sufficient to determine a general
+ordering of finite-sample errors across different target orders. Their finite-sample performance
+should instead be evaluated jointly in terms of structural complexity and the associated
+probabilistic quantities.
+In summary, the target order first determines the MDI map ofI(G)C relative to that
+order, which in turn determines the node parent sets, the numbers of parent configurations,
+and their probability masses. These quantities jointly affect the finite-sample estimation
+error. Different admissible target orders retain the same MDI-map validity and exact-
+factorization property for the conditional distribution, but may exhibit different structural
+complexities and finite-sample estimation efficiencies. This result provides the theoretical
+basis for the comparisons of parameter dimension and finite-sample estimation performance
+across different target orders in Section 7.
+6.7 Practical Heuristic and Validation Selection
+The preceding bounds also suggest a practical order-selection rule. Exhaustive enumeration
+ofAR(G,C ) is generally infeasible, so we propose a pilot-sample heuristic rather than an
+optimization theorem. For a candidate orderαR, constructHαR
+R with FGCR and estimate
+its local quantities from a small pilot sample. Letˆπeff(αR) be a lower empirical quantile of
+the positive parent-configuration frequencies and letˆθeff(αR) be a lower empirical quantile
+of the corresponding posterior-mean conditional probabilities. We score the order by
+Score(αR) =
+√(∑
+v∈Rrv) log(4LH(αR)/δ)
+npilot ˆπeff(αR) ˆθeff(αR)
++ λd(αR)
+dmax
++ µS(αR)
+Smax
+,
+wherenpilot is the pilot-sample size,dmax andSmax normalize parameter and transformation
+costs, andλ,µ≥0 are application-dependent weights. The first term is motivated by, but
+is not a valid plug-in version of, the leading query-error bound, the second penalizes the
+number of free parameters, and the third penalizes construction cost.
+A simple search starts from one admissible topological order and repeatedly considers
+adjacent swaps that preserve topological validity. At each step it evaluates the score after
+constructing the corresponding FGCR graph and accepts the best improving swap; the search
+stops when no improving swap exists or when a prescribed budget is exhausted. Orders can
+alternatively be sampled from Kahn-style tie breaks and ranked by the same score. Every
+accepted order still has the exact MDI-map and factorization guarantees; the heuristic only
+chooses among valid representations. Without pilot data, a conservative surrogate is to
+minimize d(αR), breaking ties byLH(αR), subject to a bound onS(αR), while recognizing
+that this surrogate cannot estimateπmin or θmin.
+36
+
+PAGE 37
+MDI Maps of Conditioned Bayesian Networks
+The quantiles in the score are tuning choices, not lower confidence bounds forπmin or
+θmin; the score has no optimality or risk guarantee. Choose quantile levels and weights before
+evaluation, use normalizersmax{1,d max}and max{1,S max}, and report them. To apply a
+fixed-graph bound after selection, use independent pilot and fitting samples. Alternatively,
+for a prespecified finite collection ofM candidates evaluated on the same fitting sample,
+replace δby δ/Min each candidate bound and take a union bound. Arbitrary adaptive
+reuse of the fitting data is not covered by the fixed-graph theorem.
+6.7.1 V alidation-Based Selection Guarantee
+The pilot-quantile score is a heuristic. A finite-candidate procedure with an explicit excess-
+risk guarantee is available by using held-out log loss. It applies equally to graphs constructed
+by FGCR, ROS, or an exact ordered-independence oracle.
+Theorem 33 (Finite-Candidate Validation Oracle Inequality)Condition on all or-
+der generation, pilot data, and fitting data. LetˆQ1,..., ˆQK be the resulting strictly positive
+joint estimates onR, and letZ1,...,Zm be independent of these estimates and i.i.d. from
+PC. Suppose 0≤−log ˆQk(z)≤B for allk,z, with a finiteB determined before validation.
+Set
+ˆk∈arg min
+1≤k≤K
+1
+m
+m∑
+i=1
+−log ˆQk(Zi).
+With conditional probability at least1−δ,
+DKL(PC∥ˆQˆk)≤min
+1≤k≤K
+DKL(PC∥ˆQk) + 2B
+√
+log(2K/δ)
+2m . (6.4)
+Proof Conditional on the fitted candidates, Hoeffding’s inequality and a union bound
+give |ˆLk−Lk| ≤ηsimultaneously for all k, where η= B
+√
+log(2K/δ)/(2m) and
+Lk = EPC[−log ˆQk(Z)]. If k⋆minimizes Lk, then Lˆk≤ˆLˆk +η≤ˆLk⋆+η≤Lk⋆+ 2η.
+Subtract the common entropyH(PC) to obtain the KL inequality.
+For BDeu fits a computable choice is
+B = max
+k
+∑
+v∈R
+log 1
+mina,x ˆpk,v(x|a).
+Strictly positive pseudocounts make this finite even with empty cells. The guarantee
+compares the realized fitted candidates, not an unknown globally optimal topological order;
+it does not eliminate the fitting error of any candidate. Its dependence onB can also be
+conservative. The selected estimate must not be refitted on the validation observations and
+then assigned the same certificate without further analysis. Duplicates may be removed
+before validation: only distinct fitted distributions need enterK.
+37
+
+PAGE 38
+Li and Sun
+7. Experiments
+7.1 Experimental Setup and Reproducibility Boundary
+This section replaces the earlier unreproduced tables and plots with a new, independently
+executable study on CHILD and ALARM. It does not claim to recover the original random-
+CPT library or historical timings. We use the publicly distributed BIF structures and CPTs
+from the bnlearn Bayesian Network Repository (bnlearn Bayesian Network Repository, 2026).
+CHILD has 20 nodes and 25 arcs; ALARM has 37 nodes and 46 arcs. We retain one supplied
+parameterization per network, including its zero CPT entries. Decimal-rounding row normal-
+ization, original compressed files, exported CPT arrays, retrieval information, and SHA-256
+checksums are included in the accompanyingdata/ and results/environment.json.
+For CHILD we condition onChestXray = Normal and HypoxiaInO2 = Mild. The
+query is the joint distribution of (Disease, Sick); the scalar event is (TGA, yes). For
+ALARM we condition onPRESS = NORMAL and EXPCO2 = NORMAL. The query is
+the joint distribution of(INTUBATION, DISCONNECT, MINVOLSET), with scalar event
+(ONESIDED, TRUE, NORMAL). These are the names in the released BIF files, not abbre-
+viations assumed to exist in a different parameter library. The evidence probabilities are
+approximately 0.02331 and 0.005901, respectively; evidence is not treated as a free source of
+samples.
+The master seed is 20261007. Each network receives 100 randomized Kahn topological
+orders, using uniform selection among the currently eligible vertices and deterministic sorting
+of that eligible list before selection. This is not uniform sampling over the set of all topological
+orders. We save the full orders and restricted orders instead of relying solely on a seed to
+describe the candidate set.
+We use 20 independent repetitions per network. Each repetition contains 500 pilot
+observations, a disjoint fitting pool of 5000 observations, and a disjoint validation sample of
+1000 observations. The fitting sizes aren∈{100, 1000, 5000}, using nested prefixes of that
+repetition’s fitting pool. Observations are generated by exact ancestral sampling followed by
+rejection on the evidence event. The accepted observations, proposal counts, state encodings,
+seeds, and sample-splitting convention are saved. All orders share the same observations
+within a repetition, so comparisons are paired; neither candidate orders nor sample-size
+points are independent repetitions.
+Every fitted model uses a BDeu posterior mean withISS = 10. We compute exact
+conditional family marginals and target marginals by variable elimination with deterministic
+minimum-result-factor-size ordering. Thus there is no additional Monte Carlo error in the
+reported query truth or KL evaluation. For an exact conditional graph, KL is evaluated by
+the local decomposition; for the induced-subgraph baseline, cross entropy is evaluated using
+its true family marginals and the conditional entropy obtained from an exact conditional
+graph. KL is measured in nats. Scalar-event RMSE is{1
+20
+∑20
+j=1(ˆpj−p)2}1/2; it need not
+rank methods in the same order as whole-distribution KL.
+Operational baselines. The full-joint reference computes
+PC(XT =t) =
+∑
+xR\T
+∏
+v∈V pv(xv|xpaG(v))
+⏐⏐
+xT =t,xC∑
+xR
+∏
+v∈V pv(xv|xpaG(v))
+⏐⏐
+xC
+.
+38
+
+PAGE 39
+MDI Maps of Conditioned Bayesian Networks
+Table 3:New fixed-CPT benchmarks and randomized-order checks. All 100 full and re-
+stricted orders were distinct in each network.
+Network p |E|Graphs dmin dmax Max. query error
+CHILD 20 25 5 202 310 8.3e-17
+ALARM 37 46 50 445 673 1.7e-16
+Table 4:Descriptive constructor timing across 100 orders (milliseconds). Only FGCR is
+timed; there is no ROS speed claim.
+Network Median Lower quartile Upper quartile
+CHILD 0.0218 0.0210 0.0231
+ALARM 0.0458 0.0431 0.0473
+The conditional-graph method uses FGCR and estimates each resulting CPT from conditional
+observations. The induced-subgraph method usesG[R] and estimates its CPTs from exactly
+the same conditional observations. Under known CPTs, both graph-based methods use true
+conditional family probabilities, not slices copied blindly from the original CPTs. We do
+not compare a joint-model learner given unconditional data with a conditional learner given
+selected data and call that a like-for-like sample comparison.
+7.2 Structural Consistency and Computational Efficiency
+7.2.1 Structural Consistency
+For each sampled order, an independent ancestral-moralizationd-separation oracle constructs
+both the full ordered MDI map and the ordered conditional MDI map. Both agree exactly
+with FGCR in every case. This verifies the implemented constructor against the defining
+independence model, not against an unprovided ROS implementation. The FGCR–ROS
+equality remains a theorem under the stated common-order conditions, but no ROS timing
+claim is made by these experiments.
+All 100 full orders and all 100 remaining-node orders are distinct in each network, but
+they produce only 5 distinct CHILD graphs and 50 distinct ALARM graphs. We therefore
+fit once per distinct graph and map the result back to each sampled order. Deduplication
+avoids counting identical graph fits as independent evidence. The parameter dimensions
+range from 202 to 310 in CHILD and from 445 to 673 in ALARM. With known CPTs,
+all constructed target marginals agree with the full-joint reference to below2×10−16 in
+maximum coordinate error.
+Construction timing uses a warm-up followed by ten individualperf_counter_ns calls
+per order; Table 4 summarizes the distribution of per-order medians. Topological-order
+generation, oracle verification, data reading, CPT fitting, and inference are excluded from
+this descriptive constructor timing. The Python implementation maintains current-position
+maps and parent hash sets. The run used Python 3.12.14, NumPy 2.3.5, and Windows 11
+39
+
+PAGE 40
+Li and Sun
+CHILD
+193
+225
+256
+287
+319
+0.00359
+0.0038
+0.00401
+0.00422
+0.00444
+Parameter dimension
+Query RMSE (n = 5000)
+100 orders; 5 graphs; points overlap
+Time color: 0.019 to 0.026 ms
+ALARM
+427
+493
+559
+625
+691
+0.000502
+0.000633
+0.000764
+0.000895
+0.00103
+Parameter dimension
+Query RMSE (n = 5000)
+100 orders; 50 graphs; points overlap
+Time color: 0.038 to 0.058 ms
+Figure 4: Dimension, scalar-query RMSE, and construction time over 100 sampled orders
+per network. Points can overlap: different orders can induce the same graph and
+CPT estimate. Timing is a separate measurement, not the runtime of parameter
+fitting or inference.
+on an Intel64 Family 6 Model 186 processor; the full runtime description and raw individual
+timings are recorded. Timings at this scale are noisy and machine-specific. They do not
+establish a strict speed advantage over another constructor.
+7.2.2 Computational Efficiency
+The constructor measurements in this subsection are descriptive FGCR measurements and
+are not a ROS speed comparison.
+7.2.3 Order Sensitivity and Selection
+We compare six deployable choices: the smallest-dimension candidate; a random sampled
+order; the pilot-quantile heuristic; held-out log-loss selection; minimum empirical-certificate
+selection; and the induced subgraph baseline. Pilot scoring uses 10th percentiles of positive
+observed parent-cell frequencies and fitted CPT entries, with the dimension and swap
+penalties set to zero before running the study. The minimum-dimension baseline breaks
+ties by the first sampled order. The held-out selector minimizes validation log loss over
+distinct graphs; the selected fit is not retrained on validation observations. Certificate
+selection applies Theorem 29 withδ/Kfor K distinct candidate graphs before minimizing.
+An additional true-KL oracle is saved only as a diagnostic, not used by any deployable
+selector.
+The results do not uniformly favor the proposed pilot heuristic or validation selection. At
+n = 5000, the minimum-dimension candidate has mean joint KL approximately0.02061 on
+CHILD and 0.03319 on ALARM. The ALARM pilot heuristic has mean KL approximately
+40
+
+PAGE 41
+MDI Maps of Conditioned Bayesian Networks
+Table 5:Selection atn = 5000: mean joint KL and scalar-event RMSE over 20 paired
+repetitions. All methods use the same fitting observations.
+Selector CHILD KL CHILD RMSE ALARM KL ALARM RMSE
+Holdout 0.02061 0.0036977 0.03437 0.00061323
+Minimum dimension 0.02061 0.0036977 0.03319 0.00055143
+Pilot heuristic 0.02061 0.0036977 0.03619 0.00064974
+Random order 0.02496 0.0036977 0.03961 0.00074869
+Empirical bound 0.02061 0.0036977 0.03375 0.00054502
+Induced subgraph 0.06502 0.0036977 0.18925 0.0015419
+0.03619, whereas the held-out choice has mean KL approximately 0.03437. Thus the
+validation guarantee is not a claim of empirical domination of simple dimension minimization.
+Random-order mean KL is larger in these runs, but the study does not establish a general
+ranking.
+For the specified CHILD query, all sampled orders and the induced subgraph have the
+same RMSE to numerical precision. This query is insensitive to the omitted dependencies
+even though their joint distributions have different KL risks. Atn = 5000, induced-subgraph
+mean KL is about0.06502 in CHILD and0.18925 in ALARM. Atn = 100, CHILD’s lower-
+dimensional induced subgraph can have smaller joint KL than the exact conditional graphs
+because of the bias–variance trade-off. We therefore do not claim that exact representation
+guarantees superior finite-sample prediction for every query or sample size.
+7.3 Probabilistic Inference
+7.3.1 Known CPTs
+The known-CPT experiment evaluates exact conditional queries.
+7.3.2 Finite Samples
+The finite-sample experiment evaluates fitted conditional graphs, order selection, and the
+confidence certificates.
+7.3.3 Post-Intervention Scope
+No new post-intervention numerical experiment is claimed in this revision; the causal scope
+is discussed in Section 8.
+7.3.4 Finite-Sample Bounds and Certificates
+We evaluate the original worst-cell theorem, the oracle-weighted certificate, and the fully
+empirical certificate atδ= 0.05. For a matched comparison, oracle and empirical weighted
+bounds share the same local-CPT failure budgetδ/2. The worst-cell theorem’s assumptions
+fail in every tested fit: published zero probabilities and rare parent cells cannot be ignored
+41
+
+PAGE 42
+Li and Sun
+CHILD
+0
+1.5
+3
+4.5
+6
+0
+0.0196
+0.0393
+0.0589
+0.0786
+Mean joint KL (n = 5000)
+Holdout
+Min dim.
+Pilot
+Random
+Emp. bound
+Induced
+Mean +/- one SE; 20 paired repetitions.
+ALARM
+0
+1.5
+3
+4.5
+6
+0
+0.057
+0.114
+0.171
+0.228
+Mean joint KL (n = 5000)
+Holdout
+Min dim.
+Pilot
+Random
+Emp. bound
+Induced
+Mean +/- one SE; 20 paired repetitions.
+Figure 5: Mean whole-distribution KL atn = 5000. Error bars show one standard error
+across 20 paired repetitions, not a simultaneous confidence interval over meth-
+ods. The pilot heuristic and held-out selector are not uniformly better than the
+minimum-dimension baseline.
+Table 6:Bound behavior at nominal 95% per fixed graph. Medians pool distinct conditional
+graphs and 20 repetitions, not 100 independent graph samples.
+Network n Fits Actual KL Oracle Empirical
+CHILD 100 100 0.6485 38.28 44.78
+CHILD 1000 100 0.1014 20.58 26.06
+CHILD 5000 100 0.0226 11.39 14.31
+ALARM 100 1000 1.0419 103.00 112.90
+ALARM 1000 1000 0.1550 71.30 80.74
+ALARM 5000 1000 0.0386 41.94 49.59
+when checking positivity and effective-count conditions. We label these boundsnot applicable,
+rather than plotting an unjustified numerical value.
+Across all sizes, the study contains 300 CHILD and 3000 ALARM distinct-
+graph/repetition fits. Neither weighted bound is violated. These are correlated observations
+across candidate graphs and nested sample sizes, not 3300 independent coverage trials. Zero
+observed violations therefore does not establish exact 95% coverage. The bounds are very
+conservative: atn = 5000, median empirical upper bounds are approximately14.31 and
+49.59, compared with median actual KL approximately0.02261 and 0.03857. This supports
+validity as a conservative certificate in these cases, not practical tightness. Pooling rare cells,
+hierarchical priors, or truncation may improve estimation but alter the model or estimator
+42
+
+PAGE 43
+MDI Maps of Conditioned Bayesian Networks
+CHILD
+80
+346
+1.5e+03
+6.5e+03
+0.0113
+0.107
+1.01
+9.49
+89.6
+Conditional fitting sample size
+Median KL / upper bound
+Worst-cell theorem: not applicable.
+ALARM
+80
+346
+1.5e+03
+6.5e+03
+0.0193
+0.201
+2.09
+21.7
+226
+Conditional fitting sample size
+Median KL / upper bound
+Worst-cell theorem: not applicable.
+Actual KL
+Oracle-weighted
+Empirical confidence bound
+Figure 6: Median actual KL and weighted upper bounds over distinct graphs and repetitions,
+on logarithmic axes. The empirical correction makes the bound computable, but it
+remains much larger than realized KL. The uniform worst-cell result is inapplicable
+for these runs.
+and require separate analysis. No improvement for those procedures is claimed from this
+experiment.
+7.4 Empirical Summary
+The directory reproducibility_round2 contains the original BIF files, explicit CPTs,
+saved orders, conditional samples, raw fit-level losses, selection decisions, ten-repeat timings,
+configuration, unit checks, figure-generation code, and environment metadata. Running
+test_core.py, run_experiments.py, andmake_outputs.py regenerates the new numerical
+evidence. No network connection is required after obtaining this directory. Numerical values
+are deterministic up to platform floating-point differences; wall-clock timings are not.
+This study uses only two fixed network parameterizations, one conditioning event and
+one target query per network, 100 nonuniformly sampled orders, and 20 repetitions. It is not
+a replication of the previous unprovided random-parameter ALARM study, a large-network
+scalability benchmark, or an empirical ROS comparison. Those earlier results are excluded
+from the present evidential claims.
+Causal scope. The experiment above concerns observational conditioning. If a fully
+observed causal DAG and its mechanisms are already given, a hard intervention on a setJ
+removes incoming arcs toJ, fixesXJ, and substitutes those values into child kernels. FGCR
+can then be applied to the resulting known DAG and observation event. A specified soft
+intervention replaces the relevant kernels, with its parent structure declared and acyclic.
+These are representation operations on a supplied post-intervention model, not solutions
+to identification from observational data. Unknown interventions, unobserved confounding,
+43
+
+PAGE 44
+Li and Sun
+and marginalization over latent variables are outside the theorem’s fully observed DAG
+setting. We have removed the earlier unreproduced intervention plot rather than treating it
+as evidence for causal identification.
+8. Discussion
+8.1 Relation to ROS and Peña’s Method B2
+FGCR and ROS produce the same conditional graph for the same original DAG, conditioning
+set, and remaining-node order. FGCR therefore should be read as a full-graph target-order
+reduction and implementation framework, not as a new conditional graph or a uniformly
+faster algorithm. Peña’s active-route framework motivates the proof strategy, while the
+present partition-preserving initialization and the explicit descendant-set argument are
+specialized to this construction.
+8.2 Limitations
+The empirical study uses two released networks, one supplied parameterization per network,
+one evidence event and one query per network, 100 nonuniformly sampled topological orders,
+and 20 paired repetitions. The confidence bounds are valid but conservative. The pilot
+heuristic and validation selector do not uniformly improve on minimum dimension. The
+experiment does not establish a speed ranking against an independently implemented ROS
+system or a general statistical ranking of order selectors.
+8.3 Reproducibility and Evidence Boundary
+All numerical claims in the present revision are generated by the released code and saved
+inputs in reproducibility_round2. The earlier unreleased historical experiment package
+is not used as evidence here. Wall-clock timings are machine-dependent, and the random
+Kahn procedure is not uniform over all topological orders.
+8.4 Future Work
+Future work includes tighter rare-cell bounds, hierarchical or pooled estimators, larger
+and more diverse network families, graph uncertainty, equivalent-effort ROS benchmarking,
+and target-order search with explicit validation control. Multiple and soft interventions,
+latent-variable models, mixed and continuous variables require separate extensions.
+8.5 Causal Scope
+For a supplied fully observed causal DAG and supplied mechanisms, FGCR can be applied
+after a specified hard or soft intervention has produced an acyclic post-intervention model.
+This is a representation operation, not identification from observational data. Unknown
+interventions, latent confounding, and marginalization are outside the present results.
+44
+
+PAGE 45
+MDI Maps of Conditioned Bayesian Networks
+9. Conclusion
+This paper provides a structurally organized analysis of FGCR, a partition-preserving
+target-order construction for conditional Bayesian network models. The conditional graph
+is the ordered MDI map obtained by restriction of the transformed full graph, and it is
+structurally equivalent to ROS under the same order. The separate statistical analysis
+establishes exact factorization, decomposes KL error, and supplies both worst-cell and
+computable probability-weighted bounds together with a validation-based order-selection
+guarantee.
+The released CHILD and ALARM experiments verify the implementation, quantify
+order-dependent complexity, and show both the usefulness and conservatism of the new
+bounds. They also show why the paper does not claim universal superiority of FGCR
+or any one order-selection heuristic. The main contribution is a transparent target-order
+framework whose structural and statistical consequences can be reproduced and evaluated
+independently.
+Acknowledgments
+This research was supported by the National Natural Science Foundation of China
+(No. 12661078).
+Appendix A. Proof of Target-Order Transformation
+This appendix proves Theorem 11 using explicit active-route cases and Lemma 38; it does
+not assume that arbitrary initial orders satisfy the general Method B2 theorem. The node
+processing order, adjacent swap rules, and the covered-arc reversal operations of Algorithm 2
+correspond to Peña’s Method B2, but the two differ in the construction of the initial node
+ordering: Peña’s Method B2 first constructs a specific initial ordering fromG and the target
+order α, whereas our algorithm directly takes the given topological orderβof the original
+graph G as the initial ordering.
+The target order in this paper has the special formα= (β|C,β|R). We first prove
+that this target order enjoys a within-block relative order preservation property during the
+execution of the algorithm, and then on this basis show that when the algorithm directly
+starts fromβas the initial order, it still yields an MDI map ofG with respect toα. For
+the edge-addition part of the proof we adopt Peña’s active-route inductive framework from
+Theorem 5, where the parts that originally relied on the specially constructed initial order
+will be re-established using our partition-preservation property.
+Proof dependencies and independent steps. The appendix uses four standard graph-
+ical facts with their usual finite-DAG conditions: covered-arc reversal preserves Markov
+equivalence (Lemma 6); ordered I-maps of graphoids have unique minimal predecessor
+boundaries; d-separation equals separation in the moralized ancestral graph; and active
+paths can be represented by routes whose internal colliders themselves lie in the conditioning
+set. These are background facts, not new results (Pearl, 1988; Chickering, 1995; Peña, 2011).
+45
+
+PAGE 46
+Li and Sun
+The route criterion permits repeated vertices, requires endpoints outside the conditioning
+set, and tests each internal occurrence separately.
+Peña supplies the historical active-route induction strategy, not an initialization theorem
+being silently applied to an arbitrary order. The partition invariant, termination argument,
+ancestral-maximum lemma, all edge-addition cases, and final equality argument are given
+explicitly below. In particular, the key descendant-set fact is proved in Lemma 38, not
+merely imported by its former external lemma number. Graphical intersection is proved in
+Section 2; it is not inferred from positivity of an estimated distribution.
+A.1 Basic Properties of the Partition-Preserving Target Order
+Lemma 34 (Relative Order Invariance)LetG = (V,E ) be a DAG,V =C ˙∪R, and let
+βbe a topological order ofG. Construct the target orderα= (β|C,β|R) = (αC,αR). Denote
+by βj the current node order after thej-th adjacent swap performed by the algorithm, and
+set β0 =β. Then for everyj≥0, βj|C =αC and βj|R =αR. That is, during the execution
+of the algorithm, the relative order of nodes withinC and withinR never changes.
+Proof We proceed by induction on the number of swapsj.
+Forj = 0, by the definition of the target orderα= (β0|C,β0|R), we immediately have
+β0|C =αC and β0|R =αR.
+Assume the claim holds forβj. Consider the next adjacent swap performed by the
+algorithm. Let Y be the current node being processed andZ its right neighbour inβj.
+According to the algorithm’s swap condition,Y and Z are swapped only ifZ lies to the left
+of Y in the target orderα.
+If Y,Z ∈C, then by the induction hypothesisβj|C =αC; hence their relative order in
+βj and inαis the same, so the swap condition cannot be satisfied. Similarly, ifY,Z ∈R,
+then βj|R =αR, and they cannot be swapped either.
+Thus every effective adjacent swap in the algorithm occurs between one node inC and
+one node inR, and therefore never alters the relative order of nodes within either partition.
+Consequently, after the swap we still haveβj+1|C =αC and βj+1|R =αR. By mathematical
+induction, the claim holds for allj≥0.
+Corollary 35 (Cross-partition swap type)Under the conditions of Lemma 34, suppose
+the algorithm swaps adjacent nodesY,Z in the current orderβj, whereY is to the left ofZ,
+and Z is to the left ofY in the target orderα. Then necessarilyY∈R and Z∈C.
+Proof By Lemma 34, two nodes both inC or both inR have the same relative order
+in βj and in α, so they cannot form an inverted pair to be swapped. Hence Y and
+Z must belong to different partitions. Since α= (αC,αR) places all nodes of C be-
+fore all nodes ofR, while currentlyY≺βj Z andZ≺αY, we must haveY∈R andZ∈C.
+A.2 Algorithm Invariants and Termination
+Here T denotes the number of elementary graph-modification stages; it is not a sample size.
+Using the notation of Section 4, letG0 =G and β0 =β. Algorithm 2 processes nodes from
+46
+
+PAGE 47
+MDI Maps of Conditioned Bayesian Networks
+right to left according to the target orderα, and stepwise transforms the current working
+order βj intoαby adjacent swaps.
+Suppose the adjacent nodes to be swapped areY,Z , withY≺βj Z butZ≺αY. If there
+is no edgeY →Z in the current graph, the algorithm simply swapsY and Z; ifY →Z
+exists, it first adds the necessary parent edges to make it a covered arc, then reverses it to
+Z→Y, and afterwards swaps their positions in the current working order.
+Except for the way the initial node order is generated, Algorithm 2 uses the same node
+processing and local graph transformation rules as Method B2: nodes are processed from
+right to left according toα, and adjacent swaps gradually transform the current order into
+α; when an edgeY →Z exists between the two nodes to be swapped, the algorithm first
+adds necessary parent edges to make it covered and then performs the covered-arc reversal,
+followed by swappingY and Z. Therefore, Peña’s arguments concerning the local graph
+modifications can be reused, but his arguments concerning the initial order need to be
+re-established using the partition-preservation properties developed above.
+We next verify a basic invariant maintained throughout the execution.
+Lemma 36 (Consistency of graph and current working order)During the execu-
+tion of Algorithm 2, letGi be the current graph afteri graph modifications, and letβj be the
+current working order afterj adjacent swaps. Then for every actual state(Gi,βj) occurring
+during the execution,Gi is a DAG and is consistent with the current working orderβj.
+Proof Initially G0 = G and β0 = β. Since βis a topological order ofG, G0 is a DAG
+consistent withβ0.
+We proceed by induction over the states occurring during the execution. Assume the
+current state is(Gi,βj), andGi is a DAG consistent withβj. Let the final state be(GT,βm).
+Let Y,Z be the adjacent nodes currently to be adjusted, and writePy = paGi(y) and
+Pz = paGi(z)\{y}. Specifically, Algorithm 2 constructsGi+1 from Gi in one of three ways:
+(i) reversing the covered arcY →Z; (ii) adding an edgeX→Z for someX∈Py\Pz; or
+(iii) adding an edgeX→Y for someX∈Pz\Py.
+We show that for all0≤i≤T, Gi is a DAG consistent with the current orderβj. Since
+G0 satisfies the property, by induction it suffices, assuming the current state(Gi,βj) withGi
+consistent withβj, to verify that each possible transition preserves the property. Consider
+the following four cases.
+Case 1: Gi+1 is obtained fromGi by reversing the covered arcY →Z. Reversing a
+covered arc cannot create any cycle, soGi+1 is a DAG. Moreover, after the covered-arc
+reversal,Y and Z are immediately swapped inβj. HenceGi+1 is consistent with the new
+working order.
+Case 2: Gi+1 is obtained by adding an edgeX→Z with X∈Py\Pz. Since Gi is
+consistent withβj, inβj we haveX left ofY, andY left ofZ. ThusX is left ofZ in βj;
+adding an edge consistent with the topological order cannot create a cycle, soGi+1 is a
+DAG consistent withβj.
+Case 3: Gi+1 is obtained by adding an edgeX→Y with X∈Pz\Py. Since Gi is
+consistent withβj, inβj we haveX left ofZ, andY is the left neighbour ofZ. HenceX is
+left ofY in βj, so adding the edge preserves acyclicity and consistency.
+Case 4: There is no edge betweenY and Z in Gi. The algorithm only swaps their
+positions in the current order without changing the graph. Since before the swapGi is
+47
+
+PAGE 48
+Li and Sun
+consistent with the order, andY,Z are adjacent with no edge between them, after swapping
+they remain consistent with the new order.
+Thus every operation of Algorithm 2 preserves the invariant that the current graph is a
+DAG and is consistent with the current working order. Hence the claim holds for every
+actual state.
+Lemma 37 (Termination)Algorithm 2 terminates after finitely many adjacent swaps,
+and upon terminationβm =α.
+Proof Define the number of inversions of the current working orderβj with respect to
+the target orderαas Inv(βj,α) =
+⏐⏐⏐
+{
+(u,v ) :u≺βj v, v≺αu
+}⏐⏐⏐.The algorithm swaps only
+adjacent pairs whose relative order differs from that inα. Since the swapped nodes are
+adjacent, each swap removes exactly one inversion, soInv(βj+1,α) = Inv(βj,α)−1. The
+inversion count is a nonnegative integer; hence after finitely many swaps the algorithm
+terminates. At termination there are no inversions, soInv(βm,α) = 0, which impliesβm =α.
+Lemma 38 (Ancestral Maximum of a Descendant Set)Let F,J be DAGs with
+I(J)⊆I(F) and let U ={y}∪deF (y). There is a unique vertexd∈U with no strict
+ancestor in U in J. Every vertex of U is a descendant ofd in J or is d itself. Here
+“maximal” means ancestrally maximal, not latest in a topological order.
+Proof Existence follows from finiteness and acyclicity. Suppose two such verticesu,v
+exist. They are incomparable by ancestry inJ. PutS = paJ(u)∪paJ(v); maximality gives
+S∩U = ∅. In the ancestral graph of{u,v}∪S in J, neitheru nor v has a descendant:
+a descendant ancestral to the other endpoint or to one of its parents would contradict
+incomparability, and one ancestral to its own parent would create a cycle. Thusu is a sink
+there. In its moral graph the only neighbors ofu are its parents, which are inS. The
+moral-ancestral separation criterion givesu⊥J v|S. InF, directed paths fromy to u and
+v have a last common vertex; their suffixes form a collider-free path betweenu,v, entirely
+in U. It is active givenS, contradictingI(J)⊆I(F). So the maximal vertex is unique.
+Following ancestors within the finite partially ordered setU shows that every vertex has
+that same maximal ancestor, proving the last assertion.
+A.3 Correctness of the MDI Map
+From the above proof, the final graphGT is a DAG consistent with the target orderα. On
+the other hand, each graph modification does not introduce any new separations; hence
+I(Gi+1)⊆I(Gi) for every step, and consequentlyI(GT )⊆I(G0). ThusGT is an I-map of
+the original graphG0 with respect to the target orderα. Since I(G0) is a graphoid, the
+MDI mapGαof G0 with respect toαexists and is unique. To proveGT =Gα, it remains
+to showI(Gα)⊆I(GT ).
+48
+
+PAGE 49
+MDI Maps of Conditioned Bayesian Networks
+By the definition of the MDI map we haveI(Gα)⊆I(G0). Thus, by induction, it suffices
+to prove that for every0≤i<T , ifI(Gα)⊆I(Gi), thenI(Gα)⊆I(Gi+1). Equivalently,
+we prove the contrapositive: if inGi+1 there existsA̸⊥Gi+1 B|S, i.e. there is an active
+route betweenA and B with respect toS, then inGαalso A̸⊥GαB|S.
+We adopt Peña’s route terminology. A route is a finite sequence of adjacent nodes,
+possibly with repetitions and possibly of length zero. Endpoints are outside the conditioning
+set; collider tests concern only internal occurrences. The active-route criterion below is
+equivalent to the usual active-path criterion: a path collider activated by a descendant in
+the conditioning set can be replaced by a directed detour to that descendant and back.
+Conversely, removal of repeated segments yields an active path with every collider ancestral
+to the conditioning set. AnS-active route is one in which every collider on the route belongs
+to S, and every non-collider does not belong toS.
+First consider the case whereGi+1 is obtained fromGi by reversing a covered arcY→Z.
+Since the reversed edge is covered, we haveI(Gi+1) = I(Gi). Therefore I(Gα)⊆I(Gi)
+implies I(Gα)⊆I(Gi+1).
+Now consider the edge-addition cases. We follow the two-layer inductive idea of Peña’s
+Theorem 5 for edge additions. AssumeI(Gα)⊆I(Gi), and prove that after adding one edge
+we still haveI(Gα)⊆I(Gi+1). To this end, take anyS-active route inGi+1 connectingA,B,
+and among all such routes choose one in which the newly added edge appears a minimal
+number of times; denote it byρAB
+i+1. We induct on the number of occurrences of the new
+edge in that route. If the new edge appears zero times, the route already exists inGi, so by
+I(Gα)⊆I(Gi) there is a correspondingS-active route inGα. If it appearsk + 1 times, we
+further distinguish the two types of added edgesX→Z or X→Y, decompose the original
+route into sub-routes containing at mostk occurrences of the new edge, apply the induction
+hypothesis to obtain the corresponding active sub-routes inGα, and then use the adjacency
+properties guaranteed byI(Gα)⊆I(Gi) and the orientations forced by the target orderα
+to concatenate them into anS-active route inGα. Suppose the claim holds for routes in
+which the new edge appears at mostk times. We now detail the case ofk + 1 occurrences.
+Reverse the route if necessary so that the selected occurrence traverses the new arc from its
+tail to its head; both directions are therefore covered.
+First, by the induction hypothesisI(Gα)⊆I(Gi), if two nodes are adjacent inGi, then
+they must also be adjacent inGα. Indeed, ifu,v are adjacent inGi but not inGα, then
+there exists some set that d-separates them inGα, but the direct edge inGi would prevent
+that separation, contradicting the inclusion.
+Case 1: Adding X→Z
+Let X ∈Py\Pz, and suppose the new edgeX →Z appears in ρAB
+i+1. Write ρAB
+i+1 =
+ρAX
+i+1∪(X→Z)∪ρZB
+i+1. Since the whole route isS-active, we haveX /∈S, andρAX
+i+1 is itself
+S-active. It contains the new edge at mostk times, so by the induction hypothesis there
+exists anS-active routeρAX
+α in Gαconnecting A and X.
+We first prove thatY ∈S. If Y /∈S, then becauseX→Y and Y →Z already exist
+in Gi, we can replace the new edgeX →Z in ρAB
+i+1 by X →Y →Z. In the segment
+X→Y→Z, Y is a non-collider andY /∈S, so the resulting route is stillS-active but uses
+the new edge one fewer time, contradicting the minimality ofρAB
+i+1. HenceY∈S.
+49
+
+PAGE 50
+Li and Sun
+Next, by the adjacency-preservation property above,Y,Z are adjacent inGα. Since the
+current swap satisfiesZ≺αY, andGαis consistent withα, we must haveZ→Y in Gα.
+Similarly, fromX→Y ∈Gi, the nodesX,Y must also be adjacent inGα. SinceGi is
+consistent withβj, we haveX≺βj Y. BecauseY ∈R, ifX∈C, then by the construction
+α= (αC,αR) all nodes ofC precede all nodes ofR, soX≺αY; ifX∈R, then byβj|R =αR
+and X≺βj Y, againX≺αY. ThereforeX≺αY, so the edge inGαmust beX→Y.
+We then split into two subcases.
+Case 1.1: Z /∈S
+Then ρZB
+i+1 is S-active; otherwise the wholeρAB
+i+1 could not beS-active. By the induction
+hypothesis, Gαcontains anS-active routeρZB
+α connecting Z and B. Since we already have
+X→Y←Z andY∈S, the concatenationρAX
+α∪(X→Y←Z)∪ρZB
+α is anS-active route
+in Gαconnecting A and B.
+Case 1.2: Z∈S
+Because Z is an internal node belonging toS in ρAB
+i+1, it must appear as a collider. Hence
+we can writeρZB
+i+1 =Z←W∪ρWB
+i+1 , withW /∈S, andρWB
+i+1 is S-active. By the induction
+hypothesis, GαcontainsρWB
+α .
+Note thatW ̸= X. If W = X, thenρAX
+i+1∪(X→Y ←X)∪ρXB
+i+1 would be another
+S-active route connectingA,B using the new edgeX →Z fewer times, contradicting
+minimality. ThusW̸=X. Since the only new edge inGi+1 relative toGi is X→Z, the
+edge W→Z belongs toGi.
+We now prove thatY and W must be adjacent. FromW→Z∈Gi and consistency
+with βj, we haveW≺βj Z. SinceY is the left neighbour ofZ, we getW≺βj Y. AsY∈R,
+if W∈C, thenα= (αC,αR) gives W≺αY; ifW∈R, thenβj|R = αR gives W≺αY.
+Hence W≺αY.
+Assume Y and W are not adjacent inGα. SinceW≺αY, W cannot be a descendant of
+Y in Gα; and they are not adjacent, soW /∈paGα(Y ). By the local Markov property for
+DAGs,Y⊥GαW|paGα(Y ), butZ→Y∈Gα, soZ∈paGα(Y ). On the other hand, inGi
+there is the collider routeY→Z←W. Conditioning onpaGα(Y ) activates this route atZ,
+hence Y̸⊥Gi W|paGα(Y ), contradictingI(Gα)⊆I(Gi). ThereforeY,W must be adjacent.
+Together withW≺αY, this edge is oriented asW→Y. ThenρAX
+α∪(X→Y←W )∪ρWB
+α
+is anS-active route inGαconnecting A,B. Thus Case 1 is established.
+Case 2: Adding X→Y
+Now suppose X ∈Pz\Py, and the new edgeX →Y appears in ρAB
+i+1. Write ρAB
+i+1 =
+ρAX
+i+1∪(X→Y )∪ρYB
+i+1. As before, byS-activity we haveX /∈S, andρAX
+i+1 is S-active. By
+the induction hypothesis,Gαcontains anS-active routeρAX
+α connecting A,X.
+As in Case 1, fromY→Z∈Gi, I(Gα)⊆I(Gi), andZ≺αY, we obtainZ→Y∈Gα.
+Next, determine the relation betweenX and Y in Gα. From X→Z∈Gi, we have
+X≺βj Z, and sinceY is the left neighbour ofZ inβj, we getX≺βj Y. By Corollary 35, we
+haveY ∈R. IfX∈C, then fromα= (αC,αR) we getX≺αY; ifX∈R, thenβj|R =αR
+givesX≺αY. ThusX≺αY.
+50
+
+PAGE 51
+MDI Maps of Conditioned Bayesian Networks
+If X,Y were not adjacent inGα, thenX is neither a descendant nor a parent ofY,
+so by local Markov,Y ⊥GαX|paGα(Y ). But Z→Y ∈Gα, soZ∈paGα(Y ). In Gi we
+haveX→Z←Y; conditioning on this parent set (which containsZ) activates that route,
+yielding Y ̸⊥Gi X|paGα(Y ), contradictingI(Gα)⊆I(Gi). HenceX,Y must be adjacent,
+and the edge isX→Y.
+We now split into three subcases.
+Case 2.1: Y∈S, and ρYB
+i+1 =Y←X∪ρXB
+i+1
+Since ρXB
+i+1 contains fewer occurrences of the new edge than the original route, by the
+induction hypothesis there exists anS-active routeρXB
+α in Gαconnecting X,B. Together
+with X→Y, we obtainρAX
+α ∪(X→Y←X)∪ρXB
+α as anS-active route inGα.
+Case 2.2: Y∈S, and ρYB
+i+1 =Y←W∪ρWB
+i+1 , with W̸=X
+Because the only new edge isX→Y, W̸= X implies thatW→Y already belongs to
+Gi. Hence, by I(Gα)⊆I(Gi), W and Y must be adjacent inGα. From W →Y ∈Gi
+and consistency withβj, we haveW ≺βj Y. By Corollary 35,Y ∈R. If W ∈C, then
+α= (αC,αR) givesW≺αY; ifW∈R, thenβj|R =αR givesW≺αY. Thus the adjacency
+is oriented asW→Y. AlsoW /∈S, andρWB
+i+1 is S-active. The induction hypothesis yields
+ρWB
+α in Gα, and henceρAX
+α ∪(X→Y←W )∪ρWB
+α is anS-active route connectingA,B.
+Case 2.3: Y /∈S
+LetDi(Y ) = deGi(Y )∪{Y}denote the set of descendants ofY in Gi. By the induction
+hypothesis I(Gα)⊆I(Gi). By Lemma 38, the setDi(Y ), includingY itself, has a unique
+ancestrally maximal node inGα, denoted byD.
+SinceY→Z∈Gi, we haveZ∈Di(Y ). On the other hand, we have already proved that
+Z→Y∈Gα, soY is a strict descendant ofZ in Gα. Therefore, in the setDi(Y ), the node
+Z is an ancestor ofY inGα, soY cannot be the maximal node of that set inGα. Hence the
+unique maximal nodeD satisfiesD̸=Y.
+We next show thatD =Z. SupposeD̸=Z. SinceDi(Y ) is finite andD is its unique
+maximal node inGα, every other node in the set is a descendant ofD in Gα. In particular,
+Z∈Di(Y )\{D}, soZ is a descendant ofD in Gα, implyingD≺αZ. By Corollary 35,
+the current swap satisfiesY ∈R and Z ∈C. Since in α= (αC,αR) all nodes of C
+precede all nodes ofR, andD≺αZ with Z∈C, we must haveD∈C. By within-block
+order preservation,D and Z have the same relative order inβj and inα; henceD≺βj Z.
+Since Y is the left neighbour ofZ in βj, andD̸= Y,Z , we haveD≺βj Y ≺βj Z. But
+D∈deGi(Y )\{Y}, andGi is consistent withβj, so necessarilyY ≺βj D, a contradiction.
+Therefore D =Z.
+We further prove thatD /∈S. SinceD =Z, it suffices to showZ /∈S. Suppose to the
+contrary thatZ∈S. InGi we already haveX→Z and Y →Z, soX→Z←Y forms a
+route with colliderZ. BecauseY /∈S and X /∈S, whenZ∈S this route isS-active. Hence
+ρAX
+i+1∪(X→Z←Y )∪ρYB
+i+1 is anS-active route inGi+1 connecting A,B that avoids the
+new edgeX→Y, thus using the new edge fewer times thanρAB
+i+1, contradicting minimality.
+Therefore Z /∈S, and consequentlyD /∈S.
+51
+
+PAGE 52
+Li and Sun
+Since D =Z, inGi+1 we haveρAX
+i+1∪(X→D) as anS-active route connectingA,D;
+similarly, reversingρYB
+i+1 givesρBY
+i+1∪(Y→D) as anS-active route connectingB,D. Both
+routes contain the new edgeX →Y strictly fewer times thanρAB
+i+1. By the induction
+hypothesis on the number of occurrences of the new edge,GαcontainsS-active routesρAD
+α
+and ρBD
+α connecting A,D and B,D, respectively.
+Although we haveρAD
+α and ρBD
+α in Gα, they cannot be concatenated directly atD,
+because D might become a collider not inS in the concatenated route. We therefore need
+to find a suitable descendant to perform the concatenation.
+Starting from the occurrence of the newly added edgeX→Y in the original routeρAB
+i+1,
+and following the direction of the arrows towardsB, letE0 be the first node reached that
+belongs toB or S. Then E0∈{B}∪S and E0∈Di(Y ). Since D is the unique maximal
+node ofDi(Y ) in Gα, E0 is a descendant ofD in Gα. Therefore, there exists at least one
+descendant ofD inGαthat lies in{B}∪S. Among all descendants ofD in{B}∪S, choose
+one with minimal directed distance fromD, denote it byE, and letρDE
+α be a shortest
+descending route fromD to E. By this choice, no internal node ofρDE
+α belongs toS.
+If E =B, sinceD /∈S and all internal nodes ofρDE
+α are not inS, this descending route
+is S-active, soρAD
+α∪ρDE
+α is anS-active route connectingA,B.
+If E ∈S, then E ̸= D. In the concatenation ρDE
+α ∪ρED
+α , the node E is a collider
+belonging toS, while all other internal nodes are not inS. ThereforeρAD
+α∪ρDE
+α∪ρED
+α∪ρDB
+α
+is anS-active route inGαconnecting A,B. Thus Case 2.3 also holds.
+For completeness, an ordered I-map of a graphoid contains the unique ordered minimal
+parent set at every node: intersection of any two valid predecessor parent sets is again valid,
+by intersection and decomposition, and repeated intersection over the finite family yields
+the least such set. HenceE(Gα)⊆E(GT ). Conversely,I(Gα)⊆I(GT ) implies that every
+adjacency ofGT is an adjacency ofGα, since a missing adjacency in a DAG has a separating
+set, while a direct edge does not. Both graphs have orderα, so their edge sets coincide.
+Combining the above with the previously establishedI(GT )⊆I(G0), the fact thatGT is
+consistent withα, and the uniqueness of the MDI mapGαof I(G0) with respect toα, we
+obtain GT =Gα. Therefore, when the algorithm starts from the original topological order
+β, Algorithm 2 produces the MDI map ofG with respect to the target orderα. This proves
+the theorem.
+Appendix B. Proofs of Probabilistic and Finite-Sample Results
+This appendix provides the proofs of Theorem 20, Proposition 30, Theorem 21, and Theo-
+rem 23. Throughout this appendix, all variables are assumed to have finite state spaces.
+B.1 Proof of Theorem 20
+Proof Let the target order beαR = (v1,...,v|R|), and definePredαR(vi) ={v1,...,vi−1}.
+Since HR is consistent with the target orderαR, every parent ofvi precedes vi in αR; hence
+paHR(vi)⊆PredαR(vi).
+By the local Markov property of DAGs, conditional on its parents,Xvi is conditionally
+independent of the remaining predecessor variables. Therefore,Xvi⊥XPredαR(vi)\paHR(vi)|
+XpaHR(vi) [HR]. SinceI(HR)⊆I(PC), the same conditional independence relation holds
+52
+
+PAGE 53
+MDI Maps of Conditioned Bayesian Networks
+under PC. Thus, for every predecessor configuration having positive probability,PC(xvi|
+xPredαR(vi)) =PC(xvi|xpaHR(vi)).
+Applying the probability chain rule toPC according to the target order αR gives
+PC(xR) = ∏|R|
+i=1PC(xvi|xPredαR(vi)). Substituting the conditional independence relation
+above yieldsPC(xR) = ∏|R|
+i=1PC(xvi|xpaHR(vi)) =QC
+HR(xR). HenceQC
+HR =PC.
+B.2 Proof of Proposition 30
+Proof Fix a nodev, a parent configurationa, and a statex, and condition onNn(a) =m> 0.
+The BDeu posterior mean can be written as ˆpB,n(x |a) = m
+m+Av
+˜pn(x |a) + Av
+m+Av
+1
+rv.
+Therefore,
+ˆpB,n(x|a)−p(x|a) = m
+m +Av
+[˜pn(x|a)−p(x|a)] + Av
+m +Av
+[ 1
+rv
+−p(x|a)
+]
+.
+By the triangle inequality andm/(m +Av)≤1,
+|ˆpB,n(x|a)−p(x|a)|≤|˜pn(x|a)−p(x|a)|+ Av
+m +Av
+⏐⏐⏐⏐
+1
+rv
+−p(x|a)
+⏐⏐⏐⏐.
+Since 0≤p(x|a)≤1,|1/rv−p(x|a)|≤(rv−1)/rv. Hence
+|ˆpB,n(x|a)−p(x|a)|≤|˜pn(x|a)−p(x|a)|+ Av(rv−1)
+(m +Av)rv
+.
+Conditional onNn(a) =m, the random variableNn(x,a ) follows a binomial distribution
+with parametersm and p(x|a). Thus, ˜pn(x|a) is the sample mean ofm Bernoulli random
+variables. By Hoeffding’s inequality, for everyε>0,
+Pr (|˜pn(x|a)−p(x|a)|≥ε|Nn(a) =m)≤2 exp(−2mε2).
+Takingε=
+√
+log(2/δ)/(2m), the probability on the right-hand side is at mostδ. Therefore,
+with probability at least1−δ,
+|ˆpB,n(x|a)−p(x|a)|≤
+√
+log(2/δ)
+2m + Av(rv−1)
+(m +Av)rv
+.
+B.3 Proofs of Theorem 21 and Corollary 22
+Proof Proof of Theorem 21.For any fixed sample, assume thatˆQC
+D,n(xR)> 0 for every
+state xR satisfying PC(xR) > 0. By the definition of KL divergence,DKL(PC∥ˆQC
+D,n) =
+EPC[log(PC(XR)/ ˆQC
+D,n(XR))]. Multiplying and dividing the ratio inside the logarithm by
+QC
+D(XR) gives
+DKL(PC∥ˆQC
+D,n) =DKL(PC∥QC
+D) + EPC
+[
+log QC
+D(XR)
+ˆQC
+D,n(XR)
+]
+.
+53
+
+PAGE 54
+Li and Sun
+By the local factorization ofQC
+D and ˆQC
+D,n,
+log QC
+D(XR)
+ˆQC
+D,n(XR)
+=
+∑
+v∈R
+logPC(Xv|XpaD(v))
+ˆPCn (Xv|XpaD(v))
+.
+Taking expectation underPC and interchanging the finite sum and expectation yields
+EPC
+[
+log QC
+D(XR)
+ˆQC
+D,n(XR)
+]
+=
+∑
+v∈R
+EPC
+[
+logPC(Xv|XpaD(v))
+ˆPCn (Xv|XpaD(v))
+]
+.
+Fix a nodev. Applying the law of total expectation with respect to the parent configu-
+ration XpaD(v), we obtain
+EPC
+[
+logPC(Xv|XpaD(v))
+ˆPCn (Xv|XpaD(v))
+]
+= EPC(XpaD(v))
+[
+DKL
+(
+PC(Xv|XpaD(v))
+ ˆPC
+n (Xv|XpaD(v))
+)]
+.
+Summing over all nodes gives
+DKL(PC∥ˆQC
+D,n) =DKL(PC∥QC
+D)
++
+∑
+v∈R
+EPC(XpaD(v))
+[
+DKL
+(
+PC(Xv|XpaD(v))
+ ˆPC
+n (Xv|XpaD(v))
+)]
+.
+By the definitions of εstr(D) and εest,n(D), we therefore have DKL(PC∥ˆQC
+D,n) =
+εstr(D) +εest,n(D).
+Proof Proof of Corollary 22. Fix a nodev and one of its parent configurationsa. If
+PC(XpaHR(v) =a)> 0, then, by the strong law of large numbers,Nn(a)
+n −→PC(XpaHR(v) =
+a) and Nn(x,a)
+n −→PC(Xv = x,X paHR(v) = a) almost surely. Consequently, Nn(x,a)
+Nn(a) −→
+PC(Xv =x|XpaHR(v) =a) almost surely.
+Since ISS, Av, andrv are fixed constants, the BDeu posterior mean satisfiesˆpB,n(x|
+a) = Nn(x,a)+Av/rv
+Nn(a)+Av
+−→p(x|a) almost surely.
+Parent configurations having zero probability underPC have zero weight inεest,n(HR).
+Since the sets of nodes, parent configurations, and states are all finite, it follows that
+εest,n(HR)−→0 almost surely.
+By Theorem 20, εstr(HR) = 0 . Combining this with Theorem 21, we obtain
+DKL(PC∥ˆQC
+HR,n)−→0 almost surely.
+B.4 Proof of Theorem 23
+Proof By Theorem 20, the true conditional distributionPC factorizes exactly accord-
+ing to HR: PC(xR) = ∏
+v∈RPC(xv |xpaHR(v)). Since ∆ v = paHR(v)\ paGR(v) and
+54
+
+PAGE 55
+MDI Maps of Conditioned Bayesian Networks
+paHR(v) = paGR(v)∪∆ v, the factorization above can be written asPC(xR) = ∏
+v∈RPC(xv|
+xpaGR(v),x ∆v).
+On the other hand, by the definition ofQC
+GR, QC
+GR(xR) = ∏
+v∈RPC(xv |xpaGR(v)).
+Substituting these two factorizations into the definition of KL divergence gives
+DKL(PC∥QC
+GR) = EPC
+[
+log PC(XR)
+QC
+GR(XR)
+]
+=
+∑
+v∈R
+EPC
+
+log
+PC(Xv|XpaGR(v),X ∆v)
+PC(Xv|XpaGR(v))
+
+.
+By the definition of conditional mutual information, IPC(Xv;X∆v |XpaGR(v)) =
+EPC
+[
+log
+PC(Xv|XpaGR(v),X∆v )
+PC(Xv|XpaGR(v))
+]
+. Therefore, DKL(PC∥QC
+GR) = ∑
+v∈RIPC(Xv;X∆v |
+XpaGR(v)).
+B.5 Proofs of the Effective Parent-Configuration Sample Size and Global
+Finite-Sample Bounds
+This section proves Lemma 24, Theorem 25, and Corollary 26.
+B.5.1 Proof of Lemma 24
+Proof Fix a nodev∈R and a parent configurationa having positive probability, and
+defineπv,a =PC(XpaHR(v) =a). By definition,πv,a≥πmin> 0.
+Since X(1)
+R ,...,X (n)
+R are i.i.d. from PC, the number of observations having parent
+configurationa satisfiesNn(a)∼Binomial(n,πv,a). By the multiplicative Chernoff bound
+for a binomial random variable,Pr(Nn(a)< nπv,a
+2 )≤exp(−nπv,a
+8 ). Since πv,a≥πmin, we
+further havePr(Nn(a)< nπmin
+2 )≤exp(−nπmin
+8 ).
+The total number of parent configurations over all nodes is at mostQH = ∑
+v∈Rqv.
+Applying the union bound over all nodes and their parent configurations yields
+Pr
+(
+∃(v,a ) :Nn(a)< nπmin
+2
+)
+≤QH exp
+(
+−nπmin
+8
+)
+.
+If n≥8
+πmin
+log QH
+δ, then the right-hand side is at mostδ. Hence, with probability at
+least 1−δ,Nn(a)≥nπmin
+2 simultaneously for all positive-probability parent configurations.
+B.5.2 Proof of Theorem 25
+Proof Define the eventE1 ={Nn(a)≥nπmin
+2 for every positive-probability(v,a )}. By
+Lemma 24, ifn≥8
+πmin
+log 2QH
+δ, then Pr(E1)≥1−δ
+2.
+We next control all local CPT estimation errors on the eventE1.
+Fix a nodev, a parent configurationa, and a node statex, and letm =Nn(a). The
+BDeu posterior mean isˆpB,n(x|a) = Nn(x,a)+Av/rv
+m+Av , A v = ISS
+qv . By the decomposition in
+Section 6.5,
+|ˆpB,n(x|a)−p(x|a)|≤|˜pn(x|a)−p(x|a)|+ Av
+m,
+55
+
+PAGE 56
+Li and Sun
+where ˜pn(x|a) = Nn(x,a)
+Nn(a) is the empirical conditional frequency.
+Conditional onNn(a) =m, Hoeffding’s inequality gives
+Pr
+
+|˜pn(x|a)−p(x|a)|>
+√
+log(4LH/δ)
+2m |Nn(a) =m
+
+≤δ
+2LH
+.
+The total number of node-state/parent-configuration combinations isLH = ∑
+v∈Rrvqv. For
+each triple, integrate its conditional failure bound over its own countm> 0, and define its
+failure event to excludem = 0. The resulting unconditional failure probability is at most
+δ/(2LH). A union bound gives an eventE2 of probability at least1−δ/2 on which
+|˜pn(x|a)−p(x|a)|≤
+√
+log(4LH/δ)
+2m
+simultaneously for all triples with a positive observed count. IntersectingE2 withE1 has
+probability at least1−δ. We do not condition Hoeffding’s inequality on the simultaneous
+count eventE1, which depends on all variables and need not preserve the single-cell binomial
+law.
+On the eventE1, m≥nπmin
+2 . Hence
+√
+log(4LH/δ)
+2m ≤
+√
+log(4LH/δ)
+nπmin
+, Av
+m ≤2Amax
+nπmin
+. Combin-
+ing the two probability bounds, we conclude that with probability at least1−δ,
+|ˆpB,n(x|a)−p(x|a)|≤εn(δ)
+simultaneously for all valid(v,a,x ), whereεn(δ) =
+√
+log(4LH/δ)
+nπmin
++ 2Amax
+nπmin
+.
+We next convert the local probability error into a local KL-divergence bound. By
+assumption, p(x|a)≥θmin, andεn(δ)≤θmin/2. Therefore, ˆpB,n(x|a)≥p(x|a)−εn(δ)≥
+θmin
+2 .
+For a fixed nodev and parent configurationa, usingDKL(p∥q)≤χ2(p∥q), we obtain
+DKL (p(·|a)∥ˆpB,n(·|a))≤
+∑
+x
+(p(x|a)−ˆpB,n(x|a))2
+ˆpB,n(x|a) .
+Using the uniform estimation-error bound and the lower bound onˆpB,n(x|a), we obtain
+DKL (p(·|a)∥ˆpB,n(·|a))≤2rv
+θmin
+ε2
+n(δ).
+Since HR representsPC exactly, its structural error is zero. By the KL decomposition
+established above,
+DKL(PC∥ˆQC
+HR,n) =
+∑
+v∈R
+EPC(XpaHR(v))
+[
+DKL
+(
+PC(Xv|XpaHR(v))
+ ˆPC
+n (Xv|XpaHR(v))
+)]
+.
+For each nodev, the probabilities of all parent configurations sum to one. Therefore,
+DKL(PC∥ˆQC
+HR,n)≤
+∑
+v∈R
+2rv
+θmin
+ε2
+n(δ) = 2
+θmin
+( ∑
+v∈R
+rv
+)
+ε2
+n(δ).
+56
+
+PAGE 57
+MDI Maps of Conditioned Bayesian Networks
+B.5.3 Proof of Corollary 26
+Proof By Pinsker’s inequality,dTV(PC, ˆQC
+HR,n)≤
+√
+1
+2DKL(PC∥ˆQC
+HR,n). Combining this
+with Theorem 25 givesdTV(PC, ˆQC
+HR,n)≤
+√∑
+v∈Rrv
+θmin
+εn(δ).
+Moreover, by the definition of total variation distance, for every event A ⊆ XR,
+|PC(A)−ˆQC
+HR,n(A)|≤dTV(PC, ˆQC
+HR,n). Therefore,|PC(A)−ˆQC
+HR,n(A)|≤
+√∑
+v∈Rrv
+θmin
+εn(δ).
+Appendix C. Independent Validation and Reproduction
+C.1 Independent Small-Graph and Probability Checks
+The released test_core.py enumerates every subset of the forward arcs under a fixed
+labeled topological order forp = 1,..., 5, and every conditioning set, including the empty
+and full sets. The number of input triples is∑5
+p=1 2p(p−1)/2+p = 33866. Relabeling covers
+any specified initial topological order. Full and conditional outputs are separately compared
+to an independent ancestral-moralizationd-separation oracle: all 67732 edge-set checks pass.
+The ordered oracle insertsu→v exactly when u̸⊥d v |Preα(v)\{u}[G], or the
+corresponding statement withC added for the conditional graph. For a graphoid, weak
+union proves the absence of non-parent edges in this test, and intersection would remove any
+purported parent that satisfied this separation. Thus it implements the defining ordered
+parent boundary, not the same covering algorithm under another name.
+Probability tests independently enumerate a four-variable joint table and compare 98
+evidence/query cases with variable elimination, including permuted query-axis orders. The
+direct joint KL agrees with the local decomposition to about10−17. Tests also check empty
+fitted cells, all released CPT normalizations, and the bounded-simplex optimizer against a
+grid of feasible weight vectors. These tests are finite implementation checks, not substitutes
+for the general mathematical proofs.
+C.2 Released Files and Commands
+The accompanying directory contains:
+• bn_core.py: parsing, graph operations, the independent oracle, factor operations, exact
+inference, sampling, CPT fitting, and confidence calculations;
+• config.json: fixed seeds, evidence, targets, sample sizes, repetitions, prior mass, and
+timing settings;
+• test_core.py and verify_saved.py: implementation tests and re-evaluation of saved
+evidence;
+• run_experiments.py: the complete new experimental study;
+• make_outputs.py: tables and vector figures generated only from saved results;
+57
+
+PAGE 58
+Li and Sun
+• data/: source networks, exact CPT arrays, all sampled orders, and split-ready accepted
+samples;
+• results/: raw losses, all timing repetitions, selections, aggregates, checksums, tests,
+and environment metadata.
+The README gives installation and execution commands. The core study requires NumPy;
+the figure generator additionally uses ReportLab. The downloaded network files are bundled,
+so rerunning the study is offline. With the recorded versions and seeds, graph and statistical
+outputs should agree up to floating-point tolerances; elapsed times must not be expected to
+reproduce exactly.
+Appendix D. Reproducibility Package and Prespecified Extensions
+The complete code and current inputs are stored underreproducibility_round2/. The
+executable entry points are test_core.py, run_experiments.py, make_outputs.py,
+verify_saved.py, and audit_pdf.py. The directory also contains the exact BIF files,
+exported CPT arrays, all sampled orders, accepted conditional samples, raw per-fit outputs,
+timing repetitions, generated vector figures, LaTeX tables, environment metadata, and
+replay checks.
+The proposed extension protocol is intentionally separated from completed evidence.
+Additional networks, broader parameter libraries, alternative rare-cell estimators, and
+equivalent-effort ROS measurements should be added only with fixed seeds, released raw
+outputs, and independent validation data. The package README records the commands
+and the data split convention. No planned experiment is counted as a result of this revision.
+References
+bnlearn Bayesian Network Repository. CHILD and ALARM discrete bayesian network
+BIF files. Public benchmark data repository, 2026. URLhttps://www.bnlearn.com/
+bnrepository/. Retrieved 7 October 2026; original files and SHA-256 checksums bundled
+with the experiments.
+David Maxwell Chickering. A transformational characterization of equivalent bayesian
+network structures. InProceedings of the Eleventh Conference on Uncertainty in Artificial
+Intelligence, pages 87–98. Morgan Kaufmann, 1995.
+D. R. Cox and Nanny Wermuth.Multivariate Dependencies: Models, Analysis and Interpre-
+tation. Chapman & Hall, London, 1996.
+A. P. Dawid. Conditional independence in statistical theory.Journal of the Royal Statistical
+Society: Series B (Methodological), 41(1):1–15, 1979.
+Mathias Drton and Marloes H. Maathuis. Structure learning in graphical modeling.
+Annual Review of Statistics and Its Application , 4:365–393, 2017. doi: 10.1146/
+annurev-statistics-060116-053803.
+58
+
+PAGE 59
+MDI Maps of Conditioned Bayesian Networks
+Christina Heinze-Deml, Marloes H. Maathuis, and Nicolai Meinshausen. Causal structure
+learning. Annual Review of Statistics and Its Application, 5:371–391, 2018. doi: 10.1146/
+annurev-statistics-031017-100630.
+Daphne Koller and Nir Friedman.Probabilistic Graphical Models: Principles and Techniques.
+MIT press Cambridge, 2009. ISBN 9780262013192.
+Jan T. A. Koster. Marginalizing and conditioning in graphical models.Bernoulli, 8(6):
+817–840, 2002.
+Steffen L. Lauritzen.Graphical Models. Clarendon Press, Oxford, 1996. ISBN 9780198522195.
+doi: 10.1093/oso/9780198522195.001.0001.
+Richard E. Neapolitan.Learning Bayesian Networks. Prentice Hall, Upper Saddle River,
+NJ, 2004.
+Judea Pearl.Probabilistic Reasoning in Intelligent Systems: Networks of Plausible Inference.
+Morgan Kaufmann, San Mateo, CA, 1988. ISBN 9780934613736.
+Judea Pearl.Causality: Models, Reasoning, and Inference. Cambridge University Press, 2
+edition, 2009. ISBN 9780521895606. doi: 10.1017/CBO9780511803161.
+Judea Pearl and Azaria Paz. Graphoids: A graph-based logic for reasoning about relevance
+relations. In B. Du Boulay, D. Hogg, and L. Steels, editors, Advances in Artificial
+Intelligence II, pages 357–363. North-Holland, Amsterdam, 1987.
+Jose M. Peña. Finding consensus bayesian network structures.Journal of Artificial Intelli-
+gence Research, 42:661–687, 2011.
+Thomas Richardson and Peter Spirtes. Ancestral graph markov models.The Annals of
+Statistics, 30(4):962–1030, 2002. doi: 10.1214/aos/1031689015.
+Kayvan Sadeghi. Marginalization and conditioning for lwf chain graphs.The Annals of
+Statistics, 44(4):1792–1816, 2016. doi: 10.1214/16-AOS1451.
+Joan Vila-Francés, Juan Sanchís, Emilio Soria-Olivas, Antonio José Serrano, Marcelino
+Martínez-Sober, Clara Bonanad, and Silvia Ventura. Expert system for predicting unstable
+angina based on bayesian networks.Expert Systems with Applications, 40(12):5004–5010,
+2013. doi: 10.1016/j.eswa.2013.03.029.
+Xiangdong Xie, Jiahua Guo, and Yi Sun. DAGs as minimal I-maps for the induced models
+of causal bayesian networks under conditioning.Journal of Machine Learning Research,
+26(47):1–62, 2025.
+Yue Yu, Jie Chen, Tian Gao, and Mo Yu. DAG-GNN: DAG structure learning with graph
+neural networks. InProceedings of the 36th International Conference on Machine Learning,
+volume 97 ofProceedings of Machine Learning Research, pages 7154–7163. PMLR, 2019.
+59
